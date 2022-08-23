@@ -47,6 +47,17 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+  
+
+class Customer(models.Model):
+    """ A user is not automatically a customer a user only becomes a customer
+    when they make an order.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.first_name
+
 
 
 
