@@ -1,0 +1,29 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="single-category-grid">
+            <h4>Top categories</h4>
+            <div class="category-grid">
+                {% for category in categories %}
+                    <div class="category">
+                        <h2>{{ category.name }}</h2>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="single-product-grid">
+            <h4>Top selling items</h4>
+            <div class="product-grid">
+                {% for product in products %} 
+                <a href="{% url 'products:detail' slug=product.slug %}">
+                 <div class="product">
+                     <img class="product_image" src="{{product.thumb.url}}">
+                     <h2>{{ product.name }}</h2>
+                     <h4>Kes {{ product.price }}</h4>
+                 </div></a>
+                 {% endfor %}
+             </div>
+        </div>
+    </div>
+{% endblock content %}

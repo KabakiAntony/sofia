@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="product-details">
+            <div class="product-wrapper">
+                <div class="product-image">
+                    <img src="{{product.thumb.url}}">
+                </div>
+                <div class="product-information">
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.description.capitalize }}</p>
+                        <h4 class="price">Kes {{ product.price }}</h4>
+                        <button type="submit" class="btn">Add to cart</button>
+                </div>
+            </div>
+            <div class="cart-summary">
+                <h1>Cart information</h1>
+            </div>
+        </div>
+        <div class="related-products"></div>
+    </div>
+{% endblock content %}
