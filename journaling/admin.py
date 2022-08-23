@@ -1,6 +1,7 @@
 from django.contrib import admin
-from accounts.models import User
+from accounts.models import User, Customer
 from products.models import Product, Category
+from cart.models import Cart, CartItems
 
 
 class JournalingAdmin(admin.AdminSite):
@@ -11,5 +12,8 @@ class JournalingAdmin(admin.AdminSite):
 admin_site = JournalingAdmin(name='admin')
 
 admin_site.register(User)
+admin_site.register(Customer)
 admin_site.register(Category)
 admin_site.register(Product)
+admin_site.register(Cart)
+admin_site.register(CartItems)
