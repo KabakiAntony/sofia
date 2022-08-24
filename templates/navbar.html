@@ -5,7 +5,7 @@
         <a  href="{% url 'products:list' %}" class="header_logo">
             <h1>Journaling Therapy</h1>
         </a>
-        <form class="header_search" method="GET" action="">
+        <form class="header_search" method="GET" action="{% url 'products:search' %}">
             <label>
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" 
                     viewBox="0 0 32 32">
