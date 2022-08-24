@@ -46,6 +46,8 @@
     color: var(--color-black);
     background-color: var(--color-white);
     min-height: 100vh;
+    padding-bottom:3rem;
+    position: relative;
   }
   
   img {
@@ -503,4 +505,24 @@ header > .container{
   fill:var(--color-white);
   position:relative;
   top:4px;
+}
+
+/* footer styling */
+
+footer{
+  background-color: var(--color-test-three);
+  color: var(--white);
+  height:5rem;
+  padding: 1rem;
+  position:absolute;
+  bottom:0;
+  width: 100%;
+  text-align: center;
+}
+footer a{
+  color:var(--color-dark)
+}
+footer a:hover{
+  color:var(--color-white);
+  font-weight: bold;
 }
