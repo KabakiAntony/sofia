@@ -4,7 +4,8 @@ from .import views
 app_name = 'products'
 
 urlpatterns = [
-    path('', views.home_page, name="list"),
+    path('', views.home, name="list"),
+    path('search/', views.search, name="search"),
     path('<slug:slug>/', views.product_details, name="detail"),
 ]
 
