@@ -75,7 +75,7 @@
     z-index: 111;
     position: absolute;
     top: 5rem;
-    background: var(--color-light);
+    background: var(--color-test-three);
     border-radius: 0.5rem;
     box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
     overflow: hidden;
@@ -97,7 +97,7 @@
   }
   
   .dropdown-menu a:hover {
-    background-color: var(--color-dark-medium);
+    background-color: var(--color-test-two);
     color: var(--color-white);
   }
 
@@ -245,6 +245,7 @@ header > .container{
   color:var(--color-black);
   font-weight:500;
   margin-top: 0.5rem;
+  margin-bottom: 2.5rem;
 }
 .auth_form{
   padding:2.2rem;
