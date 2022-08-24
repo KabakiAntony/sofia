@@ -501,11 +501,11 @@ header > .container{
 }
 
 .continue-btn svg{
-  height:1.8rem;
-  width: 1.8rem;
+  height:1.6rem;
+  width: 1.6rem;
   fill:var(--color-white);
   position:relative;
-  top:4px;
+  top:3px;
 }
 
 /* footer styling */
@@ -529,4 +529,29 @@ footer a:hover{
 }
 footer svg{
   fill:var(--color-black);
+}
+
+/* search page */
+.not-found{
+  padding:2rem;
+  display: block;
+}
+
+.not-found p{
+  font-size: 2rem;
+  font-weight:600;
+  text-align: center;
+  margin-bottom:2rem;
+}
+.not-found a{
+  color: var(--color-dark);
+}
+.not-found a:hover{
+  color:var(--color-gray);
+}
+.not-found svg{
+  margin-top:3rem;
+  fill:var(--color-dark);
+  height:10rem;
+  width:10rem;
 }
