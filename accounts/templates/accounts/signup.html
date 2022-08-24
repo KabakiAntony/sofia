@@ -6,7 +6,7 @@
       <h4 class="form_header">Sign up</h4>
       <form action="" method="POST" class="auth_form">
         {% csrf_token %}
-          {% for field in form %}
+        {% for field in form %}
             <label>{{ field.label }}</label>
             {{ field }}
           {% endfor %}
