@@ -526,3 +526,6 @@ footer a:hover{
   color:var(--color-white);
   font-weight: bold;
 }
+footer svg{
+  fill:var(--color-black);
+}
