@@ -3,14 +3,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from . import admin
 from django.urls import path, include
-from products import views as home_page_products
+from products import views as home_page
 
 urlpatterns = [
     path('admin/', admin.admin_site.urls),
     path('accounts/', include('accounts.urls')),
     path('products/', include('products.urls')),
     path('cart/', include('cart.urls')),
-    path('', home_page_products.home_page, name='home'),
+    path('', home_page.home, name='home'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
