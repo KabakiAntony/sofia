@@ -1,7 +1,9 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Barlow&display=swap'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap'); */
 /* @import url('https://fonts.googleapis.com/css2?family=Jost&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Figtree&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Figtree&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
 
 :root{
     --color-main:#F28775;
@@ -27,7 +29,9 @@
     /* font-family: 'Barlow', sans-serif; */
     /* font-family: 'Didact Gothic', sans-serif; */
      /* font-family: 'Jost', sans-serif; */
-    font-family: 'Figtree', sans-serif;
+    /* font-family: 'Figtree', sans-serif; */
+    /* font-family: 'Quicksand', sans-serif; */
+    font-family: 'Lexend Deca', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -41,7 +45,7 @@
 
   body {
     line-height: 1.6;
-    font-weight: 400;
+    /* font-weight: 400; */
     font-size: 1.5rem;
     color: var(--color-black);
     background-color: var(--color-white);
@@ -75,12 +79,11 @@
     z-index: 111;
     position: absolute;
     top: 5rem;
-    background: var(--color-test-three);
+    background: var(--color-dark-medium);
     border-radius: 0.5rem;
     box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
     overflow: hidden;
     display: none;
-    color: var(--color-black);
   }
   
   .dropdown-menu.show {
@@ -90,7 +93,6 @@
   .dropdown-menu a {
     padding: 1.2rem 4rem;
     color: var(--color-black) !important;
-    font-weight: 500;
     font-size: 1.4rem;
     display: flex;
     gap:1.2rem;
@@ -98,11 +100,10 @@
   
   .dropdown-menu a:hover {
     background-color: var(--color-test-two);
-    color: var(--color-white);
   }
 
   .dropdown-menu > a:not(:last-child) {
-    border-bottom: 1px solid var(--color-dark-medium);
+    border-bottom: 1px solid var(--color-black);
   }
 
 /* header styling */
@@ -157,12 +158,11 @@ header > .container{
 }
 
 .header_search input {
-  width: 55rem;/* increased from 30 */
+  width: 50rem;/* increased from 30 */
   background: transparent;
   border: none;
   outline: none;
   color: var(--color-black);
-  font-weight: 600;
 }
 
 .header_menu {
@@ -172,7 +172,7 @@ header > .container{
 }
 
 .header_menu a {
-  font-weight: 500;
+  /* font-weight: 500; */
   text-decoration: none;
   color: var(--color-black);
 }
@@ -243,7 +243,6 @@ header > .container{
   box-shadow: 1px 1px 6px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   color:var(--color-black);
-  font-weight:500;
   margin-top: 0.5rem;
   margin-bottom: 2.5rem;
 }
@@ -262,7 +261,6 @@ header > .container{
   margin-bottom: 2rem;
   padding:1.2rem;
   width:100%;
-  font-weight: bold;
   border-radius: 0.5rem;
   border:none;
 }
@@ -273,7 +271,6 @@ header > .container{
 }
 
 .auth_action  a{
-  font-weight:600;
   color:var(--color-dark);
 }
 
@@ -282,18 +279,18 @@ header > .container{
 }
 
 .btn{
-   font-weight: bold;
     background-color:var(--color-dark);
     border:none;
     text-decoration: none;
-    padding: 1.5rem;
+    padding: 1.3rem;
     color:var(--color-white);
     width:100%;
     border-radius: 0.5rem;
     margin-top: 1.5rem ;
+    text-align: center;
 }
 .btn:hover{
-  color:var(--color-white);
+  color:var(--color-gray);
   background-color:var(--color-dark-medium);
   cursor:pointer;
 }
@@ -396,7 +393,8 @@ header > .container{
   display: flex;
   flex-basis:73%;
   padding:2rem;
-  font-weight: 700;
+  font-weight: bold;
+  font-size:110%;
   text-align: center;
   gap:2%;
   border-bottom: 1px solid var(--color-gray);
@@ -416,7 +414,6 @@ header > .container{
   
 }
 .item > div{
-  font-weight: 600;
   line-height: 20px;
 }
 .item-action-buttons{
@@ -457,7 +454,7 @@ header > .container{
 
 .remove-from-cart{
   padding:0.8rem;
-  font-weight: 600;
+  /* font-weight: 600; */
   width:13%;
   margin-top: 0;
   margin-bottom: 0;
@@ -472,7 +469,6 @@ header > .container{
 
 .increase-items, .reduce-items{
   padding:0.5rem;
-  font-weight: 600;
   font-size: larger;
   width:100%;
 }
@@ -524,8 +520,7 @@ footer a{
   color:var(--color-dark)
 }
 footer a:hover{
-  color:var(--color-white);
-  font-weight: bold;
+  color:var(--color-gray);
 }
 footer svg{
   fill:var(--color-black);
@@ -539,19 +534,127 @@ footer svg{
 
 .not-found p{
   font-size: 2rem;
-  font-weight:600;
   text-align: center;
   margin-bottom:2rem;
-}
-.not-found a{
-  color: var(--color-dark);
-}
-.not-found a:hover{
-  color:var(--color-gray);
 }
 .not-found svg{
   margin-top:3rem;
   fill:var(--color-dark);
   height:10rem;
   width:10rem;
+}
+.search-btn{
+  width:30rem;
+  color:var(--color-white);
+}
+
+/* notfication messages */
+.messages{
+  width:100%;
+  text-align:center;
+}
+.messages .success{
+  background-color: var(--color-success);
+  list-style: none;
+  padding:1.2rem;
+}
+
+.messages .error{
+  background-color: var(--color-error);
+  list-style: none;
+  padding:1.2rem;
+  color:var(--color-white)
+}
+
+/* checkout page */
+
+.checkout-wrapper{
+  margin-top:2rem;
+  display:flex;
+  gap:2rem;
+}
+.info-wrapper{
+  flex-basis:50%;
+  background-color:var(--color-test-three);
+  border-radius: 0.5rem;
+  padding:2rem;
+}
+.order-summary-wrapper{
+  flex-basis:50%;
+  background-color:var(--color-test-three);
+  border-radius: 0.5rem;
+  padding:2rem;
+}
+
+.name-labels, .name-inputs, .email-labels, .email-mobile-inputs{
+  display: flex;
+  gap:2rem;
+}
+
+.personal-info, .shipping-info{
+  margin-bottom: 2rem;
+  padding:0.5rem;
+}
+
+.checkout-form  input{
+  margin-bottom: 2rem;
+  padding:1.2rem;
+  width:50%;
+  border-radius: 0.5rem;
+  border:none;
+}
+
+.checkout-form  label{
+  width:50%;
+  margin-bottom:0.1rem;
+}
+
+.checkout-form textarea{
+  resize:none;
+  width:100%;
+  border-radius: 0.5rem;
+  border:none;
+  padding:0.5rem;
+}
+
+.item-holder{
+  margin-top:2rem;
+  display: flex;
+  gap:2rem;
+  border-bottom: 1px solid var(--color-black);
+}
+.item{
+  flex-basis:20%;
+  text-align:center;
+}
+
+.summary-image > img{
+  width: 5rem;
+  height: 5rem;
+  border-radius: 0.5rem;
+}
+.summary-subtotal{
+  font-size:180%;
+  text-align: center;
+  font-weight: bold;
+  padding:2rem;
+}
+.modify-cart{
+  padding:0.5rem;
+  width:30%;
+  margin:auto;
+}
+.tnc{
+  text-align: center;
+}
+.pay{
+  font-size:130%;
+  font-weight: bold;
+}
+.payment-method{
+  padding:2rem;
+}
+.payment-note{
+  text-align: center;
+  font-size: 120%;
 }
