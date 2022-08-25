@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .models import Product, Category
 from django.db.models import Q
+from django.contrib.postgres.search import SearchVector
+
 
 
 def home(request):
@@ -25,10 +27,11 @@ def product_details(request, slug):
 def search(request):
     """ show the results of a product that a user has searched for """
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    products = Product.objects.filter(
-        Q(name__contains=q)|
-        Q(description__icontains=q)|
-        Q(category__name__icontains=q))
+    # below is an implementation of fulltext search
+    # instead of using Q lookup which is limited to one word matches
+    # ofcourse fulltext search has its limitation slows down the db with heavy usage
+    products = Product.objects.annotate(
+        search=SearchVector("name", "description", "category")).filter(search=q)
     context = {
         "products":products,
     }

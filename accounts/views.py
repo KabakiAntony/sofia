@@ -33,19 +33,22 @@ def signin_user(request):
 
         try:
             user = User.objects.get(email=email)
+
+            user = authenticate(request, email=email, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.error(request, 
+                "Email and or password is not correct, please check and try again.")
+
         except:
-            messages.error(request, 'User not found.')
+            messages.error(request, 
+            'User account could not be found, please signup to continue.')
         
-        user = authenticate(request, email=email, password=password)
 
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.error(request, "Email and or password is not correct")
-
-    context = {}
-    return render(request, 'accounts/signin.html', context)
+    return render(request, 'accounts/signin.html')
 
 def signout_user(request):
     logout(request)

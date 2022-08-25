@@ -11,7 +11,7 @@ class Cart(models.Model):
     transaction_id = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.customer.name
+        return self.customer.user.first_name
 
     @property
     def get_cart_total(self):
