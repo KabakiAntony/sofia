@@ -1,9 +1,17 @@
-from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls.static import static
+from django.conf import settings
+from . import admin
 from django.urls import path, include
-from . import views
+from products import views as home_page
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    path('', views.homepage, name="home"),
+    path('admin/', admin.admin_site.urls),
     path('accounts/', include('accounts.urls')),
+    path('products/', include('products.urls')),
+    path('cart/', include('cart.urls')),
+    path('', home_page.home, name='home'),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

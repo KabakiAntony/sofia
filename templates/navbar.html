@@ -2,10 +2,10 @@
 
 <header>
     <div class="container">
-        <a  href="{% url 'home' %}" class="header_logo">
+        <a  href="{% url 'products:list' %}" class="header_logo">
             <h1>Journaling Therapy</h1>
         </a>
-        <form class="header_search" method="GET" action="">
+        <form class="header_search" method="GET" action="{% url 'products:search' %}">
             <label>
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" 
                     viewBox="0 0 32 32">
@@ -22,11 +22,11 @@
         <nav class="header_menu">
             {% if request.user.is_authenticated %}
             <div class="header_user">
-                <p>Hi, {{ request.user.first_name }}</p>
                 <button class="dropdown-button">
+                    <p>Hi, {{ request.user.first_name }}&nbsp;&nbsp;
                     <svg class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                       <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
-                    </svg>
+                    </svg></p>
                 </button>
             </div>
             {% else %}
@@ -38,7 +38,7 @@
             </div>
             {% endif %}
             <div class="header_user">
-                <a href="#" class="cart">Cart
+                <a href="{% url 'cart' %}" class="cart">Cart
                     <svg  class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"
                     width="902.86px" height="902.86px" viewBox="0 0 902.86 902.86">
                 <path d="M671.504,577.829l110.485-432.609H902.86v-68H729.174L703.128,179.2L0,178.697l74.753,399.129h596.751V577.829z

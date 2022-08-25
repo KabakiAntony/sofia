@@ -3,20 +3,20 @@
 {% block content %}
   <div class="container">
     <div class="form_container">
-      <h4 class="form_header">Sign Up</h4>
+      <h4 class="form_header">Sign up</h4>
       <form action="" method="POST" class="auth_form">
         {% csrf_token %}
-
-          {% for field in form %}
+        {% for field in form %}
             <label>{{ field.label }}</label>
             {{ field }}
           {% endfor %}
         <button type="submit" class="btn">Sign up</button>
-        <div class="auth_action">
-          <p>Already have an account?
-            <a href="{% url 'signin' %}">Sign in</a>
-          </p>
-        </div>
       </form>
+      <div class="auth_action">
+        <p>Already have an account?
+          <a href="{% url 'signin' %}">Sign in</a>
+        </p>
+      </div>
     </div>
+  </div>
 {% endblock content %}
