@@ -12,23 +12,40 @@
     <script type="text/javascript">
       let user = '{{ request.user }}'
 
+	/* get csrf token for use in js forms */
       function getToken(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-      }
-      const csrftoken = getToken('csrftoken');
+		    let cookieValue = null;
+		    if (document.cookie && document.cookie !== '') {
+		        let cookies = document.cookie.split(';');
+		        for (let i = 0; i < cookies.length; i++) {
+		            let cookie = cookies[i].trim();
+		            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+		                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+		                break;
+		            }
+		        }
+		    }
+		    return cookieValue;
+		}
+		let csrftoken = getToken('csrftoken')
 
+		/* get cookie for creating a cart for guest user */
+		function getCookie(name) {
+				let cookieArr = document.cookie.split(";");
+				for(let i = 0; i < cookieArr.length; i++) {
+					let cookiePair = cookieArr[i].split("=");
+					if(name == cookiePair[0].trim()) {
+						return decodeURIComponent(cookiePair[1]);
+					}
+				}
+				return null;
+			}
+		let cart = JSON.parse(getCookie('cart'))
+
+		if (cart == undefined){
+			cart = {}
+			document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+		}
     </script>
     <title>Journaling Therapy</title>
   </head>
