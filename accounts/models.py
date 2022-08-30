@@ -53,10 +53,12 @@ class Customer(models.Model):
     """ A user is not automatically a customer a user only becomes a customer
     when they make an order.
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=255, null=True)
+    email = models.EmailField(unique=True, max_length=255, null=True)
 
-    def __str__(self):
-        return self.user.first_name
+    # def __str__(self):
+    #     return self.email
 
 
 
