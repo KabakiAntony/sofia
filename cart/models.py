@@ -11,7 +11,7 @@ class Cart(models.Model):
     transaction_id = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.customer.user.first_name
+        return self.customer.email
 
     @property
     def get_cart_total(self):
@@ -40,4 +40,16 @@ class CartItems(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+
+
+class ShippingInformation(models.Model):
+    """ this will hold a customer shipping information"""
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    cart =  models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    address = models.CharField(max_length=200, null=False)
+    mobile_no = models.CharField(max_length=13, null=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.address
 
