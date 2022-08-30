@@ -504,6 +504,7 @@ header > .container{
   top:3px;
 }
 
+
 /* footer styling */
 
 footer{
@@ -579,11 +580,15 @@ footer svg{
   border-radius: 0.5rem;
   padding:2rem;
 }
+.info-wrapper form{
+  margin-bottom:3rem;
+}
 .order-summary-wrapper{
   flex-basis:50%;
   background-color:var(--color-test-three);
   border-radius: 0.5rem;
   padding:2rem;
+  height:fit-content;
 }
 
 .name-labels, .name-inputs, .email-labels, .email-mobile-inputs{
@@ -627,7 +632,6 @@ footer svg{
   flex-basis:20%;
   text-align:center;
 }
-
 .summary-image > img{
   width: 5rem;
   height: 5rem;
@@ -638,23 +642,25 @@ footer svg{
   text-align: center;
   font-weight: bold;
   padding:2rem;
-}
-.modify-cart{
-  padding:0.5rem;
-  width:30%;
-  margin:auto;
-}
-.tnc{
-  text-align: center;
+  text-decoration: underline;
 }
 .pay{
-  font-size:130%;
-  font-weight: bold;
+  font-size:110%;
+  /* font-weight: bold; */
 }
 .payment-method{
   padding:2rem;
 }
+.payment-method p{
+  margin: 2rem;
+  text-align: center;
+}
 .payment-note{
   text-align: center;
-  font-size: 120%;
+}
+.payment-method-wrapper{
+  display:none;
+}
+.hidden{
+  display:none;
 }
