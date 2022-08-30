@@ -1,22 +1,22 @@
+import json
+import datetime
+from unicodedata import decimal
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib import messages
-import json
-from .models import Cart, CartItems
+from .models import Cart, CartItems, ShippingInformation
 from products.models import Product
-from accounts.models import User, Customer
+from accounts.models import Customer
+from .utils import cookie_cart, cart_data, guest_cart
+
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer=customer, complete=False)
-        items = cart.cartitems_set.all()
+    data = cart_data(request)
+    items = data['items']
+    cart = data['cart']
+    cartItems = data['cartItems']
 
-    else:
-        items = []
-        cart = {'get_cart_total':0, 'get_cart_items':0, }
-    
-    context = { "items": items, "cart": cart,}
+    context = { "items": items, "cart": cart, "cartItems":cartItems }
     return render(request, 'cart/cart.html', context)
 
 
@@ -44,21 +44,45 @@ def update_item(request):
         cartItem.delete()
         messages.success(request, f"{cartItem} removed from cart.")
 
-    return JsonResponse("Item was added", safe=False)
+    return JsonResponse("Ok", safe=False)
+
 
 def checkout(request):
+    data = cart_data(request)
+    items = data['items']
+    cart = data['cart']
+    cartItems = data['cartItems']
+
+    context = { "items": items, "cart": cart, "cartItems":cartItems }
+    return render(request, "cart/checkout.html", context)
+
+
+def process_order(request):
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
     if request.user.is_authenticated:
         customer = request.user.customer
         cart, created = Cart.objects.get_or_create(customer=customer, complete=False)
-        items = cart.cartitems_set.all()
 
     else:
-        items = []
-        cart = {'get_cart_total':0, 'get_cart_items':0, }
+        customer, cart = guest_cart(request, data)
     
-    context = { "items": items, "cart": cart,  "customer": customer,}
-    return render(request, "cart/checkout.html", context)
+    total = float(data['personal_info']['total'])
+    cart.transaction_id = transaction_id
 
+    if total == cart.get_cart_total:
+        cart.complete = True
+    cart.save()
+
+    ShippingInformation.objects.create(
+            customer=customer,
+            cart=cart,
+            address=data['shipping_info']['address'],
+            mobile_no=data['shipping_info']['mobile_no']
+        )
+   
+    return JsonResponse("Order received", safe=False)
 
 
 
