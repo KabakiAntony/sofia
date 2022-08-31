@@ -3,8 +3,9 @@
 {% block content %}
     <div class="container checkout-wrapper">
         <div class="info-wrapper">
-            <form action="" method="POST" class="checkout-form">
+            <form action="" id="shipping-info-form" method="POST" class="checkout-form">
             <h4>Personal Information</h4>
+            <hr>
             <div class="personal-info">
                 <div class="name">
                     <div class="name-labels">
@@ -12,41 +13,42 @@
                         <label class="last-name-label">Last name</label>
                     </div>
                     <div class="name-inputs">
-                        <input type="text" name="first_name" value="{{customer.user.first_name}}">
-                        <input type="text" name="last_name" value="{{customer.user.last_name}}">
+                        <input type="text" name="first_name" value="{{user.first_name}}">
+                        <input type="text" name="last_name" value="{{user.last_name}}">
                     </div>
                 </div>
                 <div class="email-phone">
                     <div class="email-labels">
                         <label class="email-label">Email</label>
-                        <label class="mobile-label">Mobile no.</label>
+                        <label class="mobile-label">Mobile no *</label>
                     </div>
                     <div class="email-mobile-inputs">
-                        <input type="email" name="email" value="{{customer.user.email}}">
-                        <input type="number" name="mobile_no">
+                        <input type="email" name="email" value="{{user.email}}">
+                        <input type="text" name="mobile_no" placeholder="+254712345678">
                     </div>
                 </div>
             </div>
             <h4>Delivery Address</h4>
+            <hr>
             <div class="shipping-info">
-                <p><label>Shipping / Delivery Address</label></p>
-                <textarea name="address"  cols="" rows="4" >
-                eg. Therapy House,
-                Room 402, Floor no.6
-                </textarea>
+                <p><label>Shipping / Delivery Address *</label></p>
+                <textarea name="address"  cols="" rows="4" placeholder="eg. Therapy House, Room 402, Floor no.6"></textarea>
             </div>
-                <h4>Choose payment method</h4>
+                <button type="submit" class="btn continue" id="continue-btn">Continue</button>
+            </form>
+            <div class="payment-method-wrapper">
+                <h4>Choose payment method</h4><hr>
                 <div class="payment-method">
-                    <p class="payment-note">Kindly note right now we are only offering lipa na mpesa (Buy goods & services)
+                    <p class="payment-note">Kindly note, right now we are only offering lipa na mpesa (Buy goods & services)
                         but more options are coming soon, Thank you.
                     </p>
+                    <p>So clicking make payment below, will push a payment prompt to the phone number you entered above</p>
+                    <button class="btn pay">Make payment</button>
                 </div>
-                <button type="submit" class="btn">Save</button>
-            </form>
-            
+            </div>
         </div>
         <div class="order-summary-wrapper">
-            <h1>Cart summary</h1>
+            <h1>Cart summary - you have  ({{ cart.get_cart_items }})  items</h1><hr>
             <div class="order-summary-holder">
                 {% for item in items %}
                     <div class="item-holder">
@@ -57,12 +59,72 @@
                     </div>
                 {% endfor %}
                 <div class="summary-subtotal">Total  {{cart.get_cart_total}}</div>
-                <!-- <p class="tnc">By clicking pay below means you agree to our terms and conditions,
-                    therefore ready to place order as is, otherwise 
-                    <a href="{% url 'cart:cart' %}" class="btn modify-cart">Modify cart</a></p> -->
-                <a href="" class="btn pay">Place Order</a>
             </div>
         </div>
     </div>
     {% include 'footer.html'%}
+
+    <script type="text/javascript">
+        let form = document.getElementById('shipping-info-form');
+        let pay_button = document.querySelector('.pay');
+        let total = "{{ cart.get_cart_total }}";
+        let url = '/cart/process_order/';
+
+        form.addEventListener('submit',(e)=>{
+            e.preventDefault();
+            console.log('form submitted');
+            document.querySelector('.continue').classList.add('hidden');
+            document.querySelector('.payment-method-wrapper').style.display = "block";
+        })
+
+        pay_button.addEventListener('click', ()=>{
+            submitFormData();
+        })
+
+        function submitFormData(){
+            let personalInfo = {
+                "first_name":null,
+                "last_name":null,
+                "email":null,
+                "total":total
+            }
+
+            let shippingInfo = {
+                "address":null,
+                "mobile_no":null
+            }
+
+            if( user == "AnonymousUser"){
+                personalInfo.first_name = form.first_name.value
+                personalInfo.last_name = form.last_name.value
+                personalInfo.email = form.email.value
+                shippingInfo.mobile_no = form.mobile_no.value
+                shippingInfo.address = form.address.value
+            }
+            else{
+                shippingInfo.mobile_no = form.mobile_no.value
+                shippingInfo.address = form.address.value
+            }
+
+
+            fetch(url, {
+                    method:'POST',
+                    headers:{'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    body:JSON.stringify({'personal_info':personalInfo, 'shipping_info': shippingInfo })
+                })
+                    .then((response) =>{
+                    return response.json();
+                    })
+                    .then((data) =>{
+                    alert('Transaction completed');
+
+                    cart = {};
+			        document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
+                    
+                    window.location.href = "{% url 'products:list' %}";
+                })
+
+        }
+
+    </script>
 {% endblock content %}

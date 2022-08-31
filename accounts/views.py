@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from .forms import MyUserCreationForm
-from .models import User
+from .models import User,Customer
 
 
 def signup_user(request):
@@ -11,7 +11,15 @@ def signup_user(request):
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save() 
+            user = form.save()
+
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            email = form.cleaned_data.get('email')
+
+            name = " ".join([first_name, last_name])
+            Customer.objects.create(user=user,name=name,email=email)
+
             login(request, user)
             return redirect('home')
         else:
@@ -21,7 +29,7 @@ def signup_user(request):
     return render(request, 'accounts/signup.html', context)
 
 def signin_user(request):
-    # later in dev add a next link to always the user back to the
+    # later in dev add a next link to always take the user back to the
     # view that required him to be logged in.
     if request.user.is_authenticated:
         # we don't  want users relogin in again
