@@ -1,49 +1,67 @@
 {% extends "main.html" %}
 
+{% load static %}
+
 {% block content %}
     <div class="container checkout-wrapper">
         <div class="info-wrapper">
             <form action="" id="shipping-info-form" method="POST" class="checkout-form">
-            <h4>Personal Information</h4>
+            <h4>Personal Information </h4>
+            <small>All fields marked with an asterisk (*) are required</small>
             <hr>
             <div class="personal-info">
+                {% if not request.user.is_authenticated %}
                 <div class="name">
-                    <div class="name-labels">
-                        <label class="first-name-label">First name</label>
-                        <label class="last-name-label">Last name</label>
+                    <div class="name-labels mobile_hidden">
+                        <label>First name*</label>
+                        <label>Last name*</label>
                     </div>
                     <div class="name-inputs">
+                        <label>First name*</label>
                         <input type="text" name="first_name" value="{{user.first_name}}">
+                        <label>Last name*</label>
                         <input type="text" name="last_name" value="{{user.last_name}}">
                     </div>
                 </div>
+                {% endif %}
                 <div class="email-phone">
-                    <div class="email-labels">
-                        <label class="email-label">Email</label>
-                        <label class="mobile-label">Mobile no *</label>
+                    <div class="email-labels mobile_hidden">
+                        <label>Email*</label>
+                        <label>Mobile no*</label>
                     </div>
                     <div class="email-mobile-inputs">
+                        <label>Email*</label>
                         <input type="email" name="email" value="{{user.email}}">
+                        <label>Mobile no*</label>
                         <input type="text" name="mobile_no" placeholder="+254712345678">
                     </div>
                 </div>
             </div>
-            <h4>Delivery Address</h4>
+            <h4>Shipping / Delivery Address</h4>
             <hr>
             <div class="shipping-info">
-                <p><label>Shipping / Delivery Address *</label></p>
-                <textarea name="address"  cols="" rows="4" placeholder="eg. Therapy House, Room 402, Floor no.6"></textarea>
+                <label>City / Town / Area *</label>
+                <input type="text" name="city_town_area" placeholder="Mombasa or Kisumu, or Embakasi Village">
+                <label>Street / Lane address / Other </label>
+                <input type="text" name="street_lane_other" placeholder="Kijabe st or Valley lane or Juja Gate B">
+                <label>Apartment / Suite / Building</label>
+                <input type="text" name="apartment_suite_building" placeholder="Edmerc hse no 1001 or Ebenezer rm 202">
             </div>
+            <div class="p-btn">
                 <button type="submit" class="btn continue" id="continue-btn">Continue</button>
+            </div>
             </form>
             <div class="payment-method-wrapper">
                 <h4>Choose payment method</h4><hr>
                 <div class="payment-method">
-                    <p class="payment-note">Kindly note, right now we are only offering lipa na mpesa (Buy goods & services)
-                        but more options are coming soon, Thank you.
-                    </p>
-                    <p>So clicking make payment below, will push a payment prompt to the phone number you entered above</p>
-                    <button class="btn pay">Make payment</button>
+                    <div class="mpesa_banner">
+                        <p>Right now we are only offering mpesa but more options coming soon.</p>
+                        <p class="standout">A prompt will be sent to your mpesa phone</p>
+                        <img src="{% static 'images/mpesa_banner.png' %}" alt="Mpesa Banner">
+                    </div>
+                    <div class="p-btn">
+                        <button class="btn pay">Pay &nbsp;&nbsp;({{cart.get_cart_total}})</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,11 +76,14 @@
                         <div class="summary-total item">{{ item.get_total }}</div>
                     </div>
                 {% endfor %}
-                <div class="summary-subtotal">Total  {{cart.get_cart_total}}</div>
+                <div class="sub_total_n_shipping">
+                    <p>Sub Total = <strong>{{cart.get_cart_total}}</strong></p>
+                    <p>Shipping = <strong>0</strong> </p>
+                </div>
+                <div class="summary-subtotal">Total  </div>
             </div>
         </div>
     </div>
-    {% include 'footer.html'%}
 
     <script type="text/javascript">
         let form = document.getElementById('shipping-info-form');
@@ -90,7 +111,9 @@
             }
 
             let shippingInfo = {
-                "address":null,
+                "city_town_area":null,
+                "street_lane_other":null,
+                "apartment_suite_building":null,
                 "mobile_no":null
             }
 
@@ -99,11 +122,15 @@
                 personalInfo.last_name = form.last_name.value
                 personalInfo.email = form.email.value
                 shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.address = form.address.value
+                shippingInfo.apartment_suite_building = form.apartment_suite_building.value
+                shippingInfo.street_lane_other = form.street_lane_other.value
+                shippingInfo.city_town_area = form.city_town_area.value
             }
             else{
                 shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.address = form.address.value
+                shippingInfo.apartment_suite_building = form.apartment_suite_building.value
+                shippingInfo.street_lane_other = form.street_lane_other.value
+                shippingInfo.city_town_area = form.city_town_area.value
             }
 
 
