@@ -1,4 +1,4 @@
-const dropdownMenu = document.querySelector(".dropdown-menu");
+const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
 let update_buttons = document.getElementsByClassName('update-cart');
@@ -16,10 +16,14 @@ if(messages){
 }
 
 
-for (i=0; i< update_buttons.length; i++){
+/* cannot use an arrow function here since 
+'this' does not bind to an arrow function */
+for (let i=0; i< update_buttons.length; i++){
     update_buttons[i].addEventListener('click', function(){
     let product_id = this.dataset.product;
     let action = this.dataset.action;
+
+    console.log(this.dataset.product)
 
     if(user === "AnonymousUser"){
       addCookieItem(product_id,action);
