@@ -1,14 +1,18 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
+{% include 'mobile_search.html' %}
+
     <div class="container">
         <div class="single-category-grid">
             <h4>Top categories</h4>
             <div class="category-grid">
                 {% for category in categories %}
+                <a href="{% url 'products:search'  %}?q={{ category.name }}">
                     <div class="category">
                         <h2>{{ category.name }}</h2>
-                    </div>
+                    </div></a>
                 {% endfor %}
             </div>
         </div>
@@ -18,13 +22,13 @@
                 {% for product in products %} 
                 <a href="{% url 'products:detail' slug=product.slug %}">
                  <div class="product">
-                     <img class="product_image" src="{{product.thumb.url}}">
+                     <img class="product_image" src="{{product.thumb.url}}" width="600" height="400">
                      <h2>{{ product.name }}</h2>
                      <h4>Kes {{ product.price }}</h4>
+                     <button class="btn mobile-product-view">view</button>
                  </div></a>
                  {% endfor %}
              </div>
         </div>
     </div>
-    {% include 'footer.html' %}
 {% endblock content %}
