@@ -46,7 +46,9 @@ class ShippingInformation(models.Model):
     """ this will hold a customer shipping information"""
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     cart =  models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
-    address = models.CharField(max_length=200, null=False)
+    city_town_area = models.CharField(max_length=200, null=True)
+    street_lane_other = models.CharField(max_length=200, null=True)
+    apartment_suite_building = models.CharField(max_length=200, null=True)
     mobile_no = models.CharField(max_length=13, null=False)
     date = models.DateTimeField(auto_now_add=True)
 
