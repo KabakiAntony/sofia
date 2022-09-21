@@ -37,8 +37,22 @@
                     </div>
                 </div>
             </div>
-            <h4>Shipping / Delivery Address</h4>
+            <h4>Select if you want it delivered to you or pickup</h4>
             <hr>
+            <div class="shipping-or-pickup">
+                <label class="label-radio" for="shipping">
+                    <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping">Delivery
+                </label>
+                <label class="label-radio" for="pickup">
+                    <input type="radio" name="shipping-or-pickup" id="pickup" value="pickup">Pickup
+                </label>
+            </div>
+            <h4>Delivery / Pickup Information</h4>
+            <hr>
+            <div class="pickup-info">
+                <p>Pickup is only available in Nairobi CBD</p>
+                <p>That comes with a small cost of <strong>Kes 200</strong></p>
+            </div>
             <div class="shipping-info">
                 <label>City / Town / Area *</label>
                 <input type="text" name="city_town_area" placeholder="Mombasa or Kisumu, or Embakasi Village">
