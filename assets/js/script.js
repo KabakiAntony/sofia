@@ -2,6 +2,7 @@ const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
 let update_buttons = document.getElementsByClassName('update-cart');
+let pickup_or_delivery_radio = document.getElementsByName('shipping-or-pickup');
 
 if (dropdownButton) {
   dropdownButton.addEventListener("click", () => {
@@ -16,14 +17,14 @@ if(messages){
 }
 
 
-/* cannot use an arrow function here since 
-'this' does not bind to an arrow function */
+/* 
+cannot use an arrow function here since 
+'this' does not bind to an arrow function
+*/
 for (let i=0; i< update_buttons.length; i++){
     update_buttons[i].addEventListener('click', function(){
     let product_id = this.dataset.product;
     let action = this.dataset.action;
-
-    console.log(this.dataset.product)
 
     if(user === "AnonymousUser"){
       addCookieItem(product_id,action);
@@ -32,6 +33,25 @@ for (let i=0; i< update_buttons.length; i++){
     }
 
   })
+}
+
+/* 
+this selects shipping or delivery but it is 
+an overkill there is an easier way of doing this
+*/
+for(let j = 0; j < pickup_or_delivery_radio.length; j++){
+  pickup_or_delivery_radio[j].addEventListener('click', ()=>{
+    let id = pickup_or_delivery_radio[j].id;
+    if (id === "shipping"){
+      document.querySelector('.shipping-info').classList.add('show');
+      document.querySelector('.pickup-info').classList.remove('show');
+    }
+    else{
+      document.querySelector('.pickup-info').classList.add('show');
+      document.querySelector('.shipping-info').classList.remove('show');
+    }
+  })
+
 }
 
 /* update cart for authenticated users */
