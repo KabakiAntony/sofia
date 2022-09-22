@@ -104,10 +104,13 @@
         let pay_button = document.querySelector('.pay');
         let total = "{{ cart.get_cart_total }}";
         let url = '/cart/process_order/';
+        let shipping_radio = document.getElementById('shipping');
+        let pickup_radio = document.getElementById('pickup');
+        let shipping_div = document.querySelector('.shipping-info');
+        let pickup_div = document.querySelector('.pickup-info');
 
         form.addEventListener('submit',(e)=>{
             e.preventDefault();
-            console.log('form submitted');
             document.querySelector('.continue').classList.add('hidden');
             document.querySelector('.payment-method-wrapper').style.display = "block";
         })
@@ -166,6 +169,17 @@
                 })
 
         }
+
+        /* show and hide pickup and delivery options*/
+        shipping_radio.addEventListener('click', ()=>{
+        shipping_div.classList.add("show");
+        pickup_div.classList.remove('show');
+        })
+
+        pickup_radio.addEventListener('click', ()=>{
+        shipping_div.classList.remove("show");
+        pickup_div.classList.add('show');
+        })
 
     </script>
 {% endblock content %}
