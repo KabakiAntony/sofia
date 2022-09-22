@@ -52,7 +52,10 @@ def signin_user(request):
 
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                if 'next' in request.POST:
+                    return redirect(request.POST.get('next'))
+                else:
+                    return redirect('home')
             else:
                 messages.error(request, 
                 "Email and or password is not correct, please check and try again.")
