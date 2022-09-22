@@ -2,7 +2,8 @@ const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
 let update_buttons = document.getElementsByClassName('update-cart');
-let pickup_or_delivery_radio = document.getElementsByName('shipping-or-pickup');
+
+
 
 if (dropdownButton) {
   dropdownButton.addEventListener("click", () => {
@@ -15,7 +16,6 @@ if(messages){
     messages.style.display = "none"
   }, 5000)
 }
-
 
 /* 
 cannot use an arrow function here since 
@@ -35,24 +35,6 @@ for (let i=0; i< update_buttons.length; i++){
   })
 }
 
-/* 
-this selects shipping or delivery but it is 
-an overkill there is an easier way of doing this
-*/
-for(let j = 0; j < pickup_or_delivery_radio.length; j++){
-  pickup_or_delivery_radio[j].addEventListener('click', ()=>{
-    let id = pickup_or_delivery_radio[j].id;
-    if (id === "shipping"){
-      document.querySelector('.shipping-info').classList.add('show');
-      document.querySelector('.pickup-info').classList.remove('show');
-    }
-    else{
-      document.querySelector('.pickup-info').classList.add('show');
-      document.querySelector('.shipping-info').classList.remove('show');
-    }
-  })
-
-}
 
 /* update cart for authenticated users */
 function updateCart(productId, update_action){
@@ -72,6 +54,7 @@ function updateCart(productId, update_action){
       the page, this works right not but it is a dirty hack*/
    })
 }
+
 
 /* update cart for un-authenticated users */
 function addCookieItem(productId, action){
