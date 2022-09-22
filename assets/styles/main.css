@@ -115,9 +115,10 @@ header > .container{
   width: 90%;
   margin:0.5rem auto;
 }
-.mobile_hidden, .desktop-menu{
+.mobile_hidden, .desktop-menu, .hidden-header{
   display: none;
 }
+
 .mobile-menu{
   width:100%;
   background-color: var(--color-gray);
@@ -594,6 +595,7 @@ small{
   display:flex;
   justify-content: center;
   align-items: center;
+  height: 80vh;
 }
 
 .form_container{
@@ -677,8 +679,21 @@ small{
   footer svg{
     fill:var(--color-white);
   }
+  /* form validations */
 
-
+  .error-span{
+    display:none;
+    border:1px solid var(--color-error);
+    font-size: 12px;
+    color: var(--color-error);
+    padding: 4px;
+    margin: 5px auto;
+    border-radius: 0.5rem;
+  }
+  .error-span.show{
+    display: block;
+  }
+  
 
 @media (min-width: 480px) {
   .logo{
@@ -1069,7 +1084,7 @@ small{
     grid-template-columns: repeat(6, 1fr);
     gap:1rem;
   }
-  .mobile_hidden_details{
+  .mobile_hidden_details, .hidden-header{
     display: block;
   }
   .cart-header > div{
