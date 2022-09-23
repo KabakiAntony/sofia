@@ -585,7 +585,7 @@ small{
 
 .signin-wrapper{
   border:none;
-  height: 80vh;
+  min-height: 80vh;
   display:flex;
   justify-content: center;
   align-items: center;
@@ -595,7 +595,7 @@ small{
   display:flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  min-height: 100vh;
 }
 
 .form_container{
