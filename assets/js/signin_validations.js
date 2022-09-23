@@ -1,8 +1,8 @@
 let form = document.getElementById('signin-form');
-    let email_input = document.getElementById('signin-email');
-    let password_input = document.getElementById('signin-password');
-    let email_error_span = document.getElementById('email-error');
-    let password_error_span = document.getElementById('password-error');
+let email_input = document.getElementById('signin-email');
+let password_input = document.getElementById('signin-password');
+let email_error_span = document.getElementById('email-error');
+let password_error_span = document.getElementById('password-error');
 
     form.addEventListener('submit',(e)=>{
         validateEmail(email_input, e);
