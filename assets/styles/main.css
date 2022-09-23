@@ -8,8 +8,8 @@
     --color-white:#ffffff;
     --color-gray: #3d3d3d;
     --color-light-gray: #969494;
-    --color-success: #5dd693;
-    --color-error: #fc4b0b;
+    --color-success: #3eaf71;
+    --color-error: #ca1616;
 }
 * {
     margin: 0;
@@ -556,7 +556,7 @@ small{
   background-color: var(--color-error);
   list-style: none;
   padding:0.5rem;
-  color:var(--color-white)
+  color:var(--color-white);
 }
 
 /* search page */
@@ -642,7 +642,7 @@ small{
 /* cart badge */
 .cart::after{
   content:attr(data-item);
-  background-color: #c00;
+  background-color: var(--color-error);
   border-radius: 22px;
   padding:0 5px;
   width: 16px;
