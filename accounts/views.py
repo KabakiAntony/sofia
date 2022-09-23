@@ -11,7 +11,6 @@ def signup_user(request):
     data = cart_data(request)
     cartItems = data['cartItems']
     
-
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
@@ -27,8 +26,9 @@ def signup_user(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, "An error occurred during registration")
-
+            for key in form.errors:
+                    messages.error(request, form.errors[key])
+               
     context = {'form': form, 'cartItems':cartItems}
     return render(request, 'accounts/signup.html', context)
 
