@@ -434,16 +434,23 @@ small{
   display: block;
   font-size: small;
 }
-.info-wrapper{
+.info-wrapper, .order-summary-wrapper{
   display:flex;
   flex-direction: column;
   box-shadow: 1px 1px 6px 3px rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
   padding:1rem;
 }
-.order-summary-wrapper{
+.item-holder{
   display: none;
 }
+/* .order-summary-wrapper{
+  display:flex;
+  flex-direction: column;
+  box-shadow: 1px 1px 6px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding:1rem;
+} */
 .personal-info, .shipping-info{
   margin-bottom: 0.5rem;
   padding:0.5rem;
@@ -534,7 +541,7 @@ small{
   display:none;
 }
 .sub_total_n_shipping{
-   padding:1.5rem;
+   padding:0.5rem;
    font-size: larger;
 }
 
@@ -1045,14 +1052,7 @@ small{
   height: 5rem;
   border-radius: 0.5rem;
 }
-.summary-subtotal{
-  font-size:180%;
-  text-align: center;
-  font-weight: bold;
-  padding:2rem;
-  text-decoration: underline;
-}
-  .mobile-product-view{
+.mobile-product-view{
     display:none;
   }
 
