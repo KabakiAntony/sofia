@@ -1,7 +1,7 @@
 import json
 import datetime
 from unicodedata import decimal
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Cart, CartItems, ShippingInformation
@@ -53,8 +53,12 @@ def checkout(request):
     cart = data['cart']
     cartItems = data['cartItems']
 
-    context = { "items": items, "cart": cart, "cartItems":cartItems }
-    return render(request, "cart/checkout.html", context)
+    if cartItems == 0:
+        messages.error(request, "You don't have any items on cart, please add some & try again.")
+        return redirect('cart:cart')
+    else:
+        context = { "items": items, "cart": cart, "cartItems":cartItems }
+        return render(request, "cart/checkout.html", context)
 
 
 def process_order(request):
@@ -78,9 +82,15 @@ def process_order(request):
     ShippingInformation.objects.create(
             customer=customer,
             cart=cart,
-            address=data['shipping_info']['address'],
+            city_town_area = data['shipping_info']['city_town_area'],
+            street_lane_other = data['shipping_info']['street_lane_other'],
+            apartment_suite_building = data['shipping_info']['apartment_suite_building'],
             mobile_no=data['shipping_info']['mobile_no']
         )
+        
+    # send notificatior to mpesa to request for payment
+    # send email to customer, email the admin wil the order attached
+    
    
     return JsonResponse("Order received", safe=False)
 
