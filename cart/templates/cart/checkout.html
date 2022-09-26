@@ -6,6 +6,7 @@
     <div class="container checkout-wrapper">
         <div class="info-wrapper">
             <form action="" id="shipping-info-form" method="POST" class="checkout-form">
+                {% csrf_token %}
             <h4>Personal Information </h4>
             <small>All fields marked with an asterisk (*) are required</small>
             <hr>
@@ -18,30 +19,35 @@
                     </div>
                     <div class="name-inputs">
                         <label>First name*</label>
-                        <input type="text" name="first_name" value="{{user.first_name}}">
+                        <span class="error-span" id="first-name-error">test</span>
+                        <input type="text" name="first_name" value="{{user.first_name}}" id="first-name" required>
                         <label>Last name*</label>
-                        <input type="text" name="last_name" value="{{user.last_name}}">
+                        <span class="error-span" id="last-name-error">test</span>
+                        <input type="text" name="last_name" value="{{user.last_name}}" id="last-name" required>
                     </div>
                 </div>
                 {% endif %}
                 <div class="email-phone">
+                    <span class="error-span" id="email-or-phone-error"></span>
                     <div class="email-labels mobile_hidden">
-                        <label>Email*</label>
-                        <label>Mobile no*</label>
+                            <label>Email*</label>
+                            <label>Mobile no*</label>
                     </div>
                     <div class="email-mobile-inputs">
                         <label>Email*</label>
-                        <input type="email" name="email" value="{{user.email}}">
+                        <span class="error-span" id="m-email-error"></span>
+                        <input type="email" name="email" value="{{user.email}}" id="email" required>
                         <label>Mobile no*</label>
-                        <input type="text" name="mobile_no" placeholder="+254712345678">
+                        <span class="error-span" id="m-mobile-error"></span>
+                        <input type="text" name="mobile_no"  placeholder="0712345678" id="mobile-no" required>
                     </div>
                 </div>
             </div>
             <h4>Select if you want it delivered to you or pickup</h4>
             <hr>
             <div class="shipping-or-pickup">
-                <label class="label-radio" for="shipping">
-                    <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping">Delivery
+                <label class="label-radio" for="shipping" id="shipping-label">
+                    <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping" required>Delivery
                 </label>
                 <label class="label-radio" for="pickup">
                     <input type="radio" name="shipping-or-pickup" id="pickup" value="pickup">Pickup
@@ -54,30 +60,19 @@
                 <p>That comes with a small cost of <strong>Kes 200</strong></p>
             </div>
             <div class="shipping-info">
+                <p>Use the fields below to be descriptive as possible</p>
                 <label>City / Town / Area *</label>
-                <input type="text" name="city_town_area" placeholder="Mombasa or Kisumu, or Embakasi Village">
+                <span class="error-span" id="city-area-error"></span>
+                <input type="text" name="city_town_area" placeholder="Mombasa or Kisumu, or Embakasi Village" id="city-town-area">
                 <label>Street / Lane address / Other </label>
-                <input type="text" name="street_lane_other" placeholder="Kijabe st or Valley lane or Juja Gate B">
+                <input type="text" name="street_lane_other" placeholder="Kijabe st or Valley lane or Juja Gate B" id="street-lane-other">
                 <label>Apartment / Suite / Building</label>
-                <input type="text" name="apartment_suite_building" placeholder="Edmerc hse no 1001 or Ebenezer rm 202">
+                <input type="text" name="apartment_suite_building" placeholder="Edmerc hse no 1001 or Ebenezer rm 202" id="apartment-suite-building">
             </div>
             <div class="p-btn">
                 <button type="submit" class="btn continue" id="continue-btn">Continue</button>
             </div>
             </form>
-            <div class="payment-method-wrapper">
-                <h4>Choose payment method</h4><hr>
-                <div class="payment-method">
-                    <div class="mpesa_banner">
-                        <p>Right now we are only offering mpesa but more options coming soon.</p>
-                        <p class="standout">A prompt will be sent to your mpesa phone</p>
-                        <img src="{% static 'images/mpesa_banner.png' %}" alt="Mpesa Banner">
-                    </div>
-                    <div class="p-btn">
-                        <button class="btn pay">Pay &nbsp;&nbsp;({{cart.get_cart_total}})</button>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="order-summary-wrapper">
             <h1>Cart summary - you have  ({{ cart.get_cart_items }})  items</h1><hr>
@@ -92,94 +87,27 @@
                 {% endfor %}
                 <div class="sub_total_n_shipping">
                     <p>Sub Total = <strong>{{cart.get_cart_total}}</strong></p>
+                    <input type="hidden" name="hidden-total-field" data-total={{cart.get_cart_total}}>
                     <p>Shipping = <strong>0</strong> </p>
+                    <p>Total = <strong>{{cart.get_cart_total}}</strong></p>
                 </div>
-                <div class="summary-subtotal">Total  </div>
+                <div class="payment-method-wrapper">
+                    <h4>Choose payment method</h4><hr>
+                    <div class="payment-method">
+                        <div class="mpesa_banner">
+                            <p>Right now we are only offering mpesa but more options coming soon.</p>
+                            <p class="standout">A prompt will be sent to your mpesa phone</p>
+                            <img src="{% static 'images/mpesa_banner.png' %}" alt="Mpesa Banner">
+                        </div>
+                        <div class="p-btn">
+                            <button class="btn pay">Pay &nbsp;&nbsp;({{cart.get_cart_total}})</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        
     </div>
 
-    <script type="text/javascript">
-        let form = document.getElementById('shipping-info-form');
-        let pay_button = document.querySelector('.pay');
-        let total = "{{ cart.get_cart_total }}";
-        let url = '/cart/process_order/';
-        let shipping_radio = document.getElementById('shipping');
-        let pickup_radio = document.getElementById('pickup');
-        let shipping_div = document.querySelector('.shipping-info');
-        let pickup_div = document.querySelector('.pickup-info');
-
-        form.addEventListener('submit',(e)=>{
-            e.preventDefault();
-            document.querySelector('.continue').classList.add('hidden');
-            document.querySelector('.payment-method-wrapper').style.display = "block";
-        })
-
-        pay_button.addEventListener('click', ()=>{
-            submitFormData();
-        })
-
-        function submitFormData(){
-            let personalInfo = {
-                "first_name":null,
-                "last_name":null,
-                "email":null,
-                "total":total
-            }
-
-            let shippingInfo = {
-                "city_town_area":null,
-                "street_lane_other":null,
-                "apartment_suite_building":null,
-                "mobile_no":null
-            }
-
-            if( user == "AnonymousUser"){
-                personalInfo.first_name = form.first_name.value
-                personalInfo.last_name = form.last_name.value
-                personalInfo.email = form.email.value
-                shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.apartment_suite_building = form.apartment_suite_building.value
-                shippingInfo.street_lane_other = form.street_lane_other.value
-                shippingInfo.city_town_area = form.city_town_area.value
-            }
-            else{
-                shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.apartment_suite_building = form.apartment_suite_building.value
-                shippingInfo.street_lane_other = form.street_lane_other.value
-                shippingInfo.city_town_area = form.city_town_area.value
-            }
-
-
-            fetch(url, {
-                    method:'POST',
-                    headers:{'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-                    body:JSON.stringify({'personal_info':personalInfo, 'shipping_info': shippingInfo })
-                })
-                    .then((response) =>{
-                    return response.json();
-                    })
-                    .then((data) =>{
-                    alert('Transaction completed');
-
-                    cart = {};
-			        document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
-                    
-                    window.location.href = "{% url 'products:list' %}";
-                })
-
-        }
-
-        /* show and hide pickup and delivery options*/
-        shipping_radio.addEventListener('click', ()=>{
-        shipping_div.classList.add("show");
-        pickup_div.classList.remove('show');
-        })
-
-        pickup_radio.addEventListener('click', ()=>{
-        shipping_div.classList.remove("show");
-        pickup_div.classList.add('show');
-        })
-
-    </script>
+    <script src="{% static 'js/page/checkout.js' %}"></script>
 {% endblock content %}
