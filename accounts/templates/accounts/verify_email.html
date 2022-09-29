@@ -1,0 +1,23 @@
+<div style="padding:10px;">
+    <h2>Hey {{ user.first_name }},</h2>
+    <h4>Welcome to Journaling Therapy, you have successfully created an account,
+    to start shopping with us, please click on the link below to verify 
+    your email and activate your account.</h4>
+    <a style="
+    background-color:#000;
+    border:none;
+    text-decoration: none;
+    color: #fff;
+    width:50%;
+    border-radius: 1.5rem;
+    margin:5px auto;
+    text-align: center;
+    font-weight: normal;
+    font-size: 16px;
+    padding:10px;
+    "
+    href="{{ protocol }}://{{ current_site.domain }}{% url 'verify' uidb64=uid token=token %}">verify your email</a>
+    <br/>
+    <h4>Cheers & all the best,</h4>
+    <h4>Journaling Therapy Team.</h4>
+</div>
