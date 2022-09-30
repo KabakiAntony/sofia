@@ -14,14 +14,14 @@
             <label>Password</label>
             <span class="error-span" id="password-error"></span>
             <input type="password" name="password" id="signin-password" required>
-            {% if request.GET.next %}
-              <input type="hidden" name="next" value="{{ request.GET.next }}">
-            {% endif %}
             <button type="submit" class="btn">Sign in</button>
           </form>
           <div class="auth_action">
             <p>Don't have an account?
               <a href="{% url 'signup' %}">Sign up</a>
+            </p>
+            <p>Forgot password?
+              <a href="{% url 'forgot' %}">Reset</a>
             </p>
           </div>
         </div>
