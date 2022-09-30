@@ -8,8 +8,16 @@
     --color-white:#ffffff;
     --color-gray: #3d3d3d;
     --color-light-gray: #969494;
-    --color-success: #3eaf71;
-    --color-error: #ca1616;
+    --color-success: #26bd26;
+    --color-success-bg:#d4edda;
+    --color-success-border:#26bd26;
+    --color-error-bg:#f0a19c;
+    --color-error-border:#e71809;
+    --color-error: #e71809;
+    --color-info-bg:#46A7F5;
+    --color-info-border:#0362af;
+    --color-warning-bg:#FFA92A;
+    --color-warning-border:#c28222;
 }
 * {
     margin: 0;
@@ -444,20 +452,12 @@ small{
 .item-holder{
   display: none;
 }
-/* .order-summary-wrapper{
-  display:flex;
-  flex-direction: column;
-  box-shadow: 1px 1px 6px 3px rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
-  padding:1rem;
-} */
 .personal-info, .shipping-info{
   margin-bottom: 0.5rem;
   padding:0.5rem;
 }
 .label-radio{
-  padding:10px;
-  margin-bottom: 10px;
+  padding:5px;
   display: block;
 }
 .label-radio > input[type="radio"]{
@@ -472,7 +472,6 @@ small{
 }
 .shipping-or-pickup{
   margin-bottom: 0.5rem;
-  padding:0.5rem;
 }
 .shipping-or-pickup p{
   text-align: center;
@@ -548,23 +547,44 @@ small{
 /* notfication messages */
 
 .messages{
-  margin-top:0rem;
-  width:100%;
+  margin:0.5rem auto;
+  width:90%;
   text-align:center;
   font-size:14px;
 }
 .messages .success{
-  background-color: var(--color-success);
+  background-color: var(--color-success-bg);
+  border:2px solid var(--color-success-border);
+  list-style: none;
+  padding:0.5rem;
+  border-radius: 0.5rem;
+}
+
+.messages .error{
+  background-color: var(--color-error-bg);
+  border:2px solid var(--color-error-border);
+  border-radius: 0.5rem;
   list-style: none;
   padding:0.5rem;
 }
 
-.messages .error{
-  background-color: var(--color-error);
+.messages .info{
+  background-color: var(--color-info-bg);
+  border:2px solid var(--color-info-border);
+  border-radius: 0.5rem;
   list-style: none;
   padding:0.5rem;
-  color:var(--color-white);
 }
+
+.messages .warning{
+  background-color: var(--color-warning-bg);
+  border:2px solid var(--color-warning-border);
+  border-radius: 0.5rem;
+  list-style: none;
+  padding:0.5rem;
+}
+
+
 
 /* search page */
 
@@ -590,7 +610,7 @@ small{
 }
 /* signin page */
 
-.signin-wrapper{
+.signin-wrapper, .password-reset-wrapper, .new-password-wrapper{
   border:none;
   min-height: 80vh;
   display:flex;
@@ -636,6 +656,9 @@ small{
 .auth_action{
   text-align: center;
   margin-bottom: 1.5rem;
+}
+.auth_action p{
+  margin-bottom: 10px;
 }
 
 .auth_action  a{
@@ -699,6 +722,12 @@ small{
   }
   .error-span.show{
     display: block;
+  }
+  
+  .check-email > *, .verification-sucess > *, .verification-failed > *{
+    padding:10px;
+    margin:10px;
+    text-align: center;
   }
   
 
