@@ -24,6 +24,24 @@ class Cart(models.Model):
         cartitems = self.cartitems_set.all()
         total = sum([item.quantity for item in cartitems])
         return total
+    
+    @property
+    def get_shipping_amount(self):
+        shipping_amount = 350
+        return shipping_amount
+
+    @property
+    def get_pickup_amount(self):
+        pickup_amount = 100
+        return pickup_amount
+    
+    @property
+    def get_shipping_n_cart_total(self):
+        return  self.get_cart_total + self.get_shipping_amount
+
+    @property
+    def get_pickup_n_cart_total(self):
+        return self.get_cart_total + self.get_pickup_amount
 
 
 class CartItems(models.Model):
@@ -53,5 +71,5 @@ class ShippingInformation(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.address
+        return self.customer.email
 
