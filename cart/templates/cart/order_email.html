@@ -1,0 +1,26 @@
+<div style="padding:10px; background-color: #ffffff; width:100%; margin:10px 0 0 0;">
+    <h4>Hey {{ customer.user.first_name }},</h4>
+    <h4>Thank for shopping on Journaling Therapy,  Your order has been successfully confirmed.</h4>
+    <p>All our items have a next day delivery.</p>
+    <h4>You ordered for.</h4>
+    <table style="font-family:'Helevetica Neue', 'Helvetica', 'Arial', 'sans-serif'; font-size:13px; border-collapse: collapse; border: 1px solid black;"
+    width="90%" cellspacing="0" cellpadding="0">
+    <tr>
+        <th></th>
+        <th style="border: 1px solid black;">Item</th>
+        <th style="border: 1px solid black;">Quantity</th>
+        <th style="border: 1px solid black;">Price</th>
+      </tr>
+        {% for item in items %}
+        <tr width="100%">
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.thumb.url}}"></td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{item.product.name}}</td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.quantity }}</td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.get_total }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h4>Thank you for shopping with us,</h4>
+    <h4>Journaling Therapy Team.</h4>
+</div>

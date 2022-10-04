@@ -21,7 +21,7 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.name
+        return self.name[:15]
 
     def snippet(self):
         return self.description[:20] + " ..."

@@ -23,11 +23,13 @@ def home(request):
 def product_details(request, slug):
     """ Show the details of an individual product"""
     data = cart_data(request)
+    cart = data['cart']
     cartItems = data['cartItems']
     product = Product.objects.get(slug=slug)
     context = {
         "product":product,
         'cartItems':cartItems,
+        "cart":cart,
     }
     return render(request, "products/product_detail.html", context)
 

@@ -1,7 +1,9 @@
-const dropdownMenu = document.querySelector(".dropdown-menu");
+const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
 let update_buttons = document.getElementsByClassName('update-cart');
+
+
 
 if (dropdownButton) {
   dropdownButton.addEventListener("click", () => {
@@ -15,8 +17,11 @@ if(messages){
   }, 5000)
 }
 
-
-for (i=0; i< update_buttons.length; i++){
+/* 
+cannot use an arrow function here since 
+'this' does not bind to an arrow function
+*/
+for (let i=0; i< update_buttons.length; i++){
     update_buttons[i].addEventListener('click', function(){
     let product_id = this.dataset.product;
     let action = this.dataset.action;
@@ -29,6 +34,7 @@ for (i=0; i< update_buttons.length; i++){
 
   })
 }
+
 
 /* update cart for authenticated users */
 function updateCart(productId, update_action){
@@ -48,6 +54,7 @@ function updateCart(productId, update_action){
       the page, this works right not but it is a dirty hack*/
    })
 }
+
 
 /* update cart for un-authenticated users */
 function addCookieItem(productId, action){

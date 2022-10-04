@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
@@ -39,6 +40,8 @@ class User(AbstractUser):
     """ Using the email as the unique identifier instead of the username """
     username = None
     email = models.EmailField(unique=True, max_length=255)
+    email_confirmed = models.BooleanField(default=False)
+    reset_password = models.BooleanField(default=False)
 
     objects = AccountsUserManager()
     
@@ -57,8 +60,8 @@ class Customer(models.Model):
     name = models.CharField(max_length=255, null=True)
     email = models.EmailField(unique=True, max_length=255, null=True)
 
-    # def __str__(self):
-    #     return self.email
+    def __str__(self):
+        return self.email
 
 
 

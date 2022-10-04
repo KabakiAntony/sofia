@@ -1,32 +1,35 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
+{% include 'mobile_search.html' %}
     <div class="container cart-wrapper">
         <div class="cart-items">
                 <div class="cart-header">
-                    <div style="width:9rem;"></div>
-                    <div class="item-details">Item</div>
-                    <div >Price</div>
+                    <div class="hidden-header"></div>
+                    <div>Item</div>
+                    <div>Price</div>
                     <div>Quantity</div>
                     <div>Total</div>
                 </div>
                 {% for item in items %}
                 <div class="item">
-                    <a href="{% url 'products:detail' slug=item.product.slug %}">
-                    <div class="cart-item-image"><img src="{{item.product.thumb.url}}"></div></a>
-                    <div class="item-details">
+                    <div><a href="{% url 'products:detail' slug=item.product.slug %}">
+                        <div class="cart-item-image">
+                            <img src="{{item.product.thumb.url}}" width="600" height="400">
+                        </div>
+                    </a></div>
+                    <div class="item-details mobile_hidden_details">
                         <h1>{{ item.product.name }}</h1>
                         <p>{{ item.product.description.capitalize }}</p>
                     </div>
-                    <div class="item-other-details">{{ item.product.price }}</div>
-                    <div class="item-other-details">
-                        <div class="increase-decrease-items">
-                            <button data-product={{item.product.id}} data-action="add" class="increase-items update-cart">+</button>
-                            {{ item.quantity }}
-                            <button data-product={{item.product.id}} data-action="remove" class="reduce-items update-cart">-</button>
-                        </div>
+                    <div>{{ item.product.price }}</div>
+                    <div class="increase-decrease-items">
+                        <div data-product={{item.product.id}} data-action="add" class="increase-items update-cart">+</div>
+                        <div class="item-quantity">{{ item.quantity }}</div>
+                        <div data-product={{item.product.id}} data-action="remove" class="reduce-items update-cart">-</div>
                     </div>
-                    <div class="item-other-details">{{ item.get_total }}</div>
+                    <div>{{ item.get_total }}</div>
                 </div>
                 <div  class="item-action-buttons">
                     <button data-product={{item.product.id}} data-action="delete" class="remove-from-cart btn update-cart">
@@ -43,29 +46,28 @@
                             4.46l-2,37a4.57,4.57,0,0,1-5,4.06,4.47,4.47,0,0,1-4.51-4.46l2-37ZM25,61.7a4.46,4.46,0,
                             0,1,4.5-4.46,4.58,4.58,0,0,1,5,4.06l2,37a4.47,4.47,0,0,1-4.51,4.46,4.57,4.57,0,0,1-5-4.06l-2-37Z"/></svg>
                         Remove</button>
-                </div>
-                <hr>
+                </div><hr>
                 {% endfor %}
+                <div class="action-buttons">
+                    <a class="btn continue-btn"  href="{% url 'products:list' %}">
+                        <svg height="512px" id="Layer_1"  version="1.1" viewBox="0 0 512 512" 
+                        width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" 
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <polygon points="352,128.4 319.7,96 160,256 160,256 
+                        160,256 319.7,416 352,383.6 224.7,256 "/></svg>
+                        Continue Shopping</a>
+                </div>
                 
-                <a class="btn continue-btn"  href="{% url 'products:list' %}">
-                <svg height="512px" id="Layer_1"  version="1.1" viewBox="0 0 512 512" 
-                width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" 
-                xmlns:xlink="http://www.w3.org/1999/xlink">
-                <polygon points="352,128.4 319.7,96 160,256 160,256 
-                160,256 319.7,416 352,383.6 224.7,256 "/></svg>
-                Continue Shopping</a>       
         </div>
         <div class="cart-summary">
             <h1>Cart summary</h1>
-            <p>You have <strong>{{ cart.get_cart_items }}</strong> items in the cart</p>
+            <p>You have <strong>{{ cart.get_cart_items }}</strong> item(s) in the cart</p>
             <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
-            <a href="{% url 'cart:checkout' %}" class="btn">
+            <div class="action-buttons">
+                <a href="{% url 'cart:checkout' %}" class="btn">
                     Checkout Kes ({{ cart.get_cart_total }})
-            </a>
-            
-            
-
+                </a>
+            </div>
         </div>
     </div>
-    {% include 'footer.html' %}
 {% endblock content %}

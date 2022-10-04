@@ -10,7 +10,14 @@ def cookie_cart(request):
         cart = {}
 
     items = []
-    order = {'get_cart_total':0, 'get_cart_items':0, }
+    order = {
+        'get_cart_total':0, 
+        'get_cart_items':0,
+        'get_shipping_amount':350,
+        'get_pickup_amount':100,
+        'get_shipping_n_cart_total':0,
+        'get_pickup_n_cart_total':0,
+        }
     cartItems = order["get_cart_items"]
 
     for i in cart:
@@ -38,6 +45,9 @@ def cookie_cart(request):
             items.append(item)
         except:
             pass
+
+    order['get_shipping_n_cart_total'] = order['get_cart_total'] + order['get_shipping_amount']
+    order['get_pickup_n_cart_total'] = order['get_cart_total'] + order['get_pickup_amount']
 
     return { "items": items, "cart": order, "cartItems":cartItems }
 
@@ -82,4 +92,5 @@ def guest_cart(request, data):
             cart=cart,
             quantity=item['quantity']
         )
+
     return customer, cart

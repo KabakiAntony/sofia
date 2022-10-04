@@ -1,51 +1,78 @@
 {% extends "main.html" %}
 
+{% load static %}
+
 {% block content %}
     <div class="container checkout-wrapper">
         <div class="info-wrapper">
             <form action="" id="shipping-info-form" method="POST" class="checkout-form">
-            <h4>Personal Information</h4>
+                {% csrf_token %}
+            <h4>Personal Information </h4>
+            <small>All fields marked with an asterisk (*) are required</small>
             <hr>
             <div class="personal-info">
+                {% if not request.user.is_authenticated %}
                 <div class="name">
-                    <div class="name-labels">
-                        <label class="first-name-label">First name</label>
-                        <label class="last-name-label">Last name</label>
+                    <div class="name-labels mobile_hidden">
+                        <label>First name*</label>
+                        <label>Last name*</label>
                     </div>
                     <div class="name-inputs">
-                        <input type="text" name="first_name" value="{{user.first_name}}">
-                        <input type="text" name="last_name" value="{{user.last_name}}">
+                        <label>First name*</label>
+                        <span class="error-span" id="first-name-error">test</span>
+                        <input type="text" name="first_name" value="{{user.first_name}}" id="first-name" required>
+                        <label>Last name*</label>
+                        <span class="error-span" id="last-name-error">test</span>
+                        <input type="text" name="last_name" value="{{user.last_name}}" id="last-name" required>
                     </div>
                 </div>
+                {% endif %}
                 <div class="email-phone">
-                    <div class="email-labels">
-                        <label class="email-label">Email</label>
-                        <label class="mobile-label">Mobile no *</label>
+                    <span class="error-span" id="email-or-phone-error"></span>
+                    <div class="email-labels mobile_hidden">
+                            <label>Email*</label>
+                            <label>Mobile no*</label>
                     </div>
                     <div class="email-mobile-inputs">
-                        <input type="email" name="email" value="{{user.email}}">
-                        <input type="text" name="mobile_no" placeholder="+254712345678">
+                        <label>Email*</label>
+                        <span class="error-span" id="m-email-error"></span>
+                        <input type="email" name="email" value="{{user.email}}" id="email" required>
+                        <label>Mobile no*</label>
+                        <span class="error-span" id="m-mobile-error"></span>
+                        <input type="text" name="mobile_no"  placeholder="0712345678" id="mobile-no" required>
                     </div>
                 </div>
             </div>
-            <h4>Delivery Address</h4>
+            <h4>Select if you want it delivered to you or pickup</h4>
             <hr>
+            <div class="shipping-or-pickup">
+                <label class="label-radio" for="shipping">
+                    <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping" required>Delivery
+                </label>
+                <label class="label-radio" for="pickup">
+                    <input type="radio" name="shipping-or-pickup" id="pickup" value="pickup">Pickup
+                </label>
+            </div>
+            <h4>Delivery / Pickup Information</h4>
+            <hr>
+            <div class="pickup-info">
+                <p>Pickup is only available in Nairobi CBD,</p>
+                <p>That comes with a small cost of <strong>Kes 100</strong></p>
+            </div>
             <div class="shipping-info">
-                <p><label>Shipping / Delivery Address *</label></p>
-                <textarea name="address"  cols="" rows="4" placeholder="eg. Therapy House, Room 402, Floor no.6"></textarea>
+                <p>Use the fields below to be descriptive as possible</p>
+                <label>City / Town / Area *</label>
+                <span class="error-span" id="city-area-error"></span>
+                <input type="text" name="city_town_area" placeholder="Mombasa or Kisumu, or Embakasi Village" id="city-town-area">
+                <label>Street / Lane address / Other </label>
+                <input type="text" name="street_lane_other" placeholder="Kijabe st or Valley lane or Juja Gate B" id="street-lane-other">
+                <label>Apartment / Suite / Building</label>
+                <input type="text" name="apartment_suite_building" placeholder="Edmerc hse no 1001 or Ebenezer rm 202" id="apartment-suite-building">
             </div>
+            <div class="p-btn">
                 <button type="submit" class="btn continue" id="continue-btn">Continue</button>
-            </form>
-            <div class="payment-method-wrapper">
-                <h4>Choose payment method</h4><hr>
-                <div class="payment-method">
-                    <p class="payment-note">Kindly note, right now we are only offering lipa na mpesa (Buy goods & services)
-                        but more options are coming soon, Thank you.
-                    </p>
-                    <p>So clicking make payment below, will push a payment prompt to the phone number you entered above</p>
-                    <button class="btn pay">Make payment</button>
-                </div>
             </div>
+            </form>
         </div>
         <div class="order-summary-wrapper">
             <h1>Cart summary - you have  ({{ cart.get_cart_items }})  items</h1><hr>
@@ -58,73 +85,37 @@
                         <div class="summary-total item">{{ item.get_total }}</div>
                     </div>
                 {% endfor %}
-                <div class="summary-subtotal">Total  {{cart.get_cart_total}}</div>
+                <div class="sub_total_n_shipping">
+                    <p>Sub Total = <strong>{{cart.get_cart_total}}</strong></p>
+                    <div class="shipping-option" id="shipping_option">
+                        <p>Delivery = <strong>{{ cart.get_shipping_amount }}</strong></p>
+                        <input type="hidden" id="shipping-hidden-total-field" data-shipping_total={{ cart.get_shipping_n_cart_total }}>
+                        <p>Total amount = <strong>{{ cart.get_shipping_n_cart_total }}</strong></p>
+                    </div>
+                    <div class="pickup-option" id="pickup_option">
+                        <p>Pickup = <strong>{{ cart.get_pickup_amount }}</strong></p>
+                        <input type="hidden" id="pickup-hidden-total-field" data-pickup_total={{ cart.get_pickup_n_cart_total }}>
+                        <p>Total amount to pay = <strong>{{ cart.get_pickup_n_cart_total }}</strong></p>
+                    </div>
+                    
+                </div>
+                <div class="payment-method-wrapper">
+                    <h4>Choose payment method</h4><hr>
+                    <div class="payment-method">
+                        <div class="mpesa_banner">
+                            <p>Right now we are only offering mpesa but more options coming soon.</p>
+                            <p class="standout">A prompt will be sent to your mpesa phone</p>
+                            <img src="{% static 'images/mpesa_banner.png' %}" alt="Mpesa Banner">
+                        </div>
+                        <div class="p-btn">
+                            <button class="btn pay">Place Order</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        
     </div>
-    {% include 'footer.html'%}
 
-    <script type="text/javascript">
-        let form = document.getElementById('shipping-info-form');
-        let pay_button = document.querySelector('.pay');
-        let total = "{{ cart.get_cart_total }}";
-        let url = '/cart/process_order/';
-
-        form.addEventListener('submit',(e)=>{
-            e.preventDefault();
-            console.log('form submitted');
-            document.querySelector('.continue').classList.add('hidden');
-            document.querySelector('.payment-method-wrapper').style.display = "block";
-        })
-
-        pay_button.addEventListener('click', ()=>{
-            submitFormData();
-        })
-
-        function submitFormData(){
-            let personalInfo = {
-                "first_name":null,
-                "last_name":null,
-                "email":null,
-                "total":total
-            }
-
-            let shippingInfo = {
-                "address":null,
-                "mobile_no":null
-            }
-
-            if( user == "AnonymousUser"){
-                personalInfo.first_name = form.first_name.value
-                personalInfo.last_name = form.last_name.value
-                personalInfo.email = form.email.value
-                shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.address = form.address.value
-            }
-            else{
-                shippingInfo.mobile_no = form.mobile_no.value
-                shippingInfo.address = form.address.value
-            }
-
-
-            fetch(url, {
-                    method:'POST',
-                    headers:{'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-                    body:JSON.stringify({'personal_info':personalInfo, 'shipping_info': shippingInfo })
-                })
-                    .then((response) =>{
-                    return response.json();
-                    })
-                    .then((data) =>{
-                    alert('Transaction completed');
-
-                    cart = {};
-			        document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
-                    
-                    window.location.href = "{% url 'products:list' %}";
-                })
-
-        }
-
-    </script>
+    <script src="{% static 'js/page/checkout.js' %}"></script>
 {% endblock content %}
