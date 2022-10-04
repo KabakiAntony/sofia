@@ -488,6 +488,15 @@ small{
   display:flex;
   flex-direction: column;
 }
+.shipping-option, .pickup-option{
+  display:none
+}
+.shipping-option.show{
+  display:block;
+}
+.pickup-option.show{
+  display: block;
+}
 .name-inputs, .email-mobile-inputs{
   width:100%;
   display: block;
