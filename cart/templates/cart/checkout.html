@@ -46,7 +46,7 @@
             <h4>Select if you want it delivered to you or pickup</h4>
             <hr>
             <div class="shipping-or-pickup">
-                <label class="label-radio" for="shipping" id="shipping-label">
+                <label class="label-radio" for="shipping">
                     <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping" required>Delivery
                 </label>
                 <label class="label-radio" for="pickup">
@@ -56,8 +56,8 @@
             <h4>Delivery / Pickup Information</h4>
             <hr>
             <div class="pickup-info">
-                <p>Pickup is only available in Nairobi CBD</p>
-                <p>That comes with a small cost of <strong>Kes 200</strong></p>
+                <p>Pickup is only available in Nairobi CBD,</p>
+                <p>That comes with a small cost of <strong>Kes 100</strong></p>
             </div>
             <div class="shipping-info">
                 <p>Use the fields below to be descriptive as possible</p>
@@ -87,9 +87,17 @@
                 {% endfor %}
                 <div class="sub_total_n_shipping">
                     <p>Sub Total = <strong>{{cart.get_cart_total}}</strong></p>
-                    <input type="hidden" name="hidden-total-field" data-total={{cart.get_cart_total}}>
-                    <p>Shipping = <strong>0</strong> </p>
-                    <p>Total = <strong>{{cart.get_cart_total}}</strong></p>
+                    <div class="shipping-option" id="shipping_option">
+                        <p>Delivery = <strong>{{ cart.get_shipping_amount }}</strong></p>
+                        <input type="hidden" id="shipping-hidden-total-field" data-shipping_total={{ cart.get_shipping_n_cart_total }}>
+                        <p>Total amount = <strong>{{ cart.get_shipping_n_cart_total }}</strong></p>
+                    </div>
+                    <div class="pickup-option" id="pickup_option">
+                        <p>Pickup = <strong>{{ cart.get_pickup_amount }}</strong></p>
+                        <input type="hidden" id="pickup-hidden-total-field" data-pickup_total={{ cart.get_pickup_n_cart_total }}>
+                        <p>Total amount to pay = <strong>{{ cart.get_pickup_n_cart_total }}</strong></p>
+                    </div>
+                    
                 </div>
                 <div class="payment-method-wrapper">
                     <h4>Choose payment method</h4><hr>
@@ -100,7 +108,7 @@
                             <img src="{% static 'images/mpesa_banner.png' %}" alt="Mpesa Banner">
                         </div>
                         <div class="p-btn">
-                            <button class="btn pay">Pay &nbsp;&nbsp;({{cart.get_cart_total}})</button>
+                            <button class="btn pay">Place Order</button>
                         </div>
                     </div>
                 </div>
