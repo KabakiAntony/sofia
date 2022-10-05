@@ -10,7 +10,7 @@
                     <img src="{{product.thumb.url}}"  width="600" height="400">
                 </div>
                 <div class="product-information">
-                        <h2>{{ product.name }}</h2>
+                        <h2 id="product-name" data-product_name="{{ product.name }}">{{ product.name }}</h2>
                         <p>{{ product.description.capitalize }}</p>
                         <h4 class="price">Kes {{ product.price }}</h4>
                         <button data-product={{ product.id }}  data-action="add" class="btn update-cart">Add to cart</button>
