@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
 
+
 :root{
   /* remove colors not being used later*/
 
@@ -739,6 +740,21 @@ small{
     text-align: center;
   }
   
+  /* loading icons */
+  .submitting{
+    background-color: var(--color-light-gray);
+    content:'';
+  }
+
+  .submitting::after{
+    display: inline-flex;
+    content:'';
+    background-image: url('../images/loader-icon.svg');
+    background-size: 20px 20px;
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+  }
 
 @media (min-width: 480px) {
   .logo{
