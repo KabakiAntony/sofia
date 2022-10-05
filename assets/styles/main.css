@@ -556,7 +556,7 @@ small{
 
 /* notfication messages */
 
-.messages{
+.messages, .anon-messages{
   margin:0.5rem auto;
   width:90%;
   text-align:center;
@@ -569,7 +569,6 @@ small{
   padding:0.5rem;
   border-radius: 0.5rem;
 }
-
 .messages .error{
   background-color: var(--color-error-bg);
   border:2px solid var(--color-error-border);
@@ -594,7 +593,25 @@ small{
   padding:0.5rem;
 }
 
+/* messages for anonymous user initiated by js*/
 
+.anon-messages{
+  display: block;
+}
+.anon-messages.success{
+  background-color: var(--color-success-bg);
+  border:2px solid var(--color-success-border);
+  padding:0.5rem;
+  border-radius: 0.5rem;
+  display: block;
+}
+.anon-messages.error{
+  background-color: var(--color-error-bg);
+  border:2px solid var(--color-error-border);
+  border-radius: 0.5rem;
+  display: block;
+  padding:0.5rem;
+}
 
 /* search page */
 
@@ -743,7 +760,6 @@ small{
   /* loading icons */
   .submitting{
     background-color: var(--color-light-gray);
-    content:'';
   }
 
   .submitting::after{
