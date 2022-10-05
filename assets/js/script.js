@@ -2,7 +2,7 @@ const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
 let update_buttons = document.getElementsByClassName('update-cart');
-
+let submit_buttons = document.getElementsByClassName('btn');
 
 
 if (dropdownButton) {
@@ -35,6 +35,13 @@ for (let i=0; i< update_buttons.length; i++){
   })
 }
 
+/* add loading icon to various buttons */
+for(let j=0; j< submit_buttons.length; j++){
+  submit_buttons[j].addEventListener('click', function(){
+    this.innerHTML = "";
+    this.classList.add('submitting');
+  })
+}
 
 /* update cart for authenticated users */
 function updateCart(productId, update_action){
