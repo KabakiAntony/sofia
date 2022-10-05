@@ -50,7 +50,7 @@
     height:auto;
   }
 
-  .btn{
+  .btn, .btn-c{
     background-color: var(--color-black);
     border:none;
     text-decoration: none;
