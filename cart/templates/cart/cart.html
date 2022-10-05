@@ -20,7 +20,7 @@
                         </div>
                     </a></div>
                     <div class="item-details mobile_hidden_details">
-                        <h1>{{ item.product.name }}</h1>
+                        <h1 id="product-name" data-product_name="{{ item.product.name }}">{{ item.product.name }}</h1>
                         <p>{{ item.product.description.capitalize }}</p>
                     </div>
                     <div>{{ item.product.price }}</div>
