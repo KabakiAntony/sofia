@@ -19,9 +19,9 @@
     <meta name="twitter:image" content="https://res.cloudinary.com/duagfazh1/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1664970398/Screenshot_2022-10-05_at_14-45-31_Journaling_Therapy_k1axji.png" />
     <meta name="twitter:site" content="Journaling Therapy" />
     <link rel="stylesheet" href="{% static 'styles/main.css' %}" />
-
+    <script defer src="{% static 'js/page/utils.js' %}" type="module"></script>
     <script type="text/javascript">
-      let user = '{{ request.user }}'
+    let user = '{{ request.user }}'
 
 	/* get csrf token for use in js forms */
       function getToken(name) {
@@ -72,12 +72,11 @@
     </ul>
     {% endif %}
 
-	<!-- show messages for the anonymous user from js actions -->
 	<div class="anon-messages"></div>
     
     {% block content %}
     {% endblock %}
-    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/script.js' %}" type="module"></script>
     {% include 'footer.html' %}
   </body>
 </html>
