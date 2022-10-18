@@ -1,16 +1,22 @@
 import json
+import time
 import datetime
+from django.contrib import messages
+from django.template.loader import render_to_string  
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.sites.shortcuts import get_current_site
-from .models import Cart, CartItems, ShippingInformation
+from django.views.decorators.csrf import csrf_exempt
+from .models import Cart, CartItems, ShippingInformation, OrderStatus
 from products.models import Product
 from .utils import cart_data, guest_cart
-from django.contrib import messages
-from django.template.loader import render_to_string
+from .order_email_objects import EmailInfo
 from cart.utils import cart_data
 from journaling.emails import send_email
+from journaling.mpesa_handler import MpesaHandler
 
+handler = MpesaHandler()
+email_maker = EmailInfo()
 
 def cart(request):
     data = cart_data(request)
@@ -38,7 +44,7 @@ def update_item(request):
 
     elif action == "remove":
         cartItem.quantity = (cartItem.quantity - 1)
-        messages.add_message(request, messages.SUCCESS, f"1 unit of {cartItem} removed from cart.")
+        messages.add_message(request, messages.ERROR, f"1 unit of {cartItem} removed from cart.")
 
     cartItem.save()
 
@@ -82,12 +88,14 @@ def process_order(request):
     
     total = float(data['personal_info']['total'])
     cart.transaction_id = transaction_id
+
+    email_maker.transaction_id = transaction_id # set trx id
     
     if (total == cart.get_pickup_n_cart_total) or (total == cart.get_shipping_n_cart_total):
         cart.complete = True
     cart.save()
 
-    ShippingInformation.objects.create(
+    shipping, created = ShippingInformation.objects.get_or_create(
             customer=customer,
             cart=cart,
             city_town_area = data['shipping_info']['city_town_area'],
@@ -95,15 +103,29 @@ def process_order(request):
             apartment_suite_building = data['shipping_info']['apartment_suite_building'],
             mobile_no=data['shipping_info']['mobile_no']
         )
-        
-    # send notificatior to mpesa to request for payment
-    # send email to customer, email the admin wil the order attached
+
+    shipping.save()
+
+    valid_phone_no = validify_phone_no(data['shipping_info']['mobile_no'])
+
+    push_payload = {
+        "amount":1,
+        "phone_number":valid_phone_no
+    }
+    # make stk push request to the number on file
+    response = handler.make_stk_push(push_payload)
+    
+    email_maker.checkout_req_id = response.get('CheckoutRequestID')
+
+    response_code = response.get('ResponseCode')
+    
+    # send email to customer and admin with the order attached.
     current_site = get_current_site(request)
     protocol = request.scheme
     
 
-    email_subject = """ Thank you for shopping with us."""
-    email_content = render_to_string("cart/order_email.html",
+    email_maker.email_subject = """ Thank you for shopping with us."""
+    email_maker.email_object = render_to_string("cart/order_email.html",
         {
         'customer':customer,
         'cart':cart,
@@ -112,16 +134,72 @@ def process_order(request):
         'current_site':current_site,
         'protocol':protocol,
         })   
-    
-    try:
-        send_email(request, customer.email, email_subject, email_content)
-        
-    except Exception as e:
-        messages.add_message(request, messages.ERROR, str(e))
 
+    email_maker.customer_email = customer.email
+
+    return JsonResponse(response_code, safe=False)
     
-   
-    return JsonResponse("Order received", safe=False)
+ 
+@csrf_exempt
+def mpesa_callback(request):
+    """ receive response from mpesa  """
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        result_code = data['Body']["stkCallback"]["ResultCode"]
+        status = data['Body']["stkCallback"]["ResultDesc"]
+
+        if result_code == 0:
+            result_code = 0
+
+        else:
+            result_code = 1
+        
+        OrderStatus.objects.create(
+            transaction_id = email_maker.transaction_id,
+            status=status,
+            result_code = result_code
+        )
+    return JsonResponse("Ok", safe=False)
+
+
+def validify_phone_no(phone_number):
+    """ get a phone number and return a phone number in the format required"""
+    if phone_number[0] == "0":
+        phone_number = "254" + phone_number[1:]
+    return phone_number
+
+
+def thank_you(request):
+    cartItems = 0
+    req_id = email_maker.checkout_req_id
+    # wait for one minute and check the status of the transaction
+    time.sleep(30) 
+    response = handler.query_transaction_status(req_id)
+
+    # payment was processed successfully
+    if response['ResultCode'] == '0':
+        status = "Your payment has been processed successfully."
+        # only send order email on successful payment.
+        try:
+            customer_email = email_maker.customer_email
+            subject = email_maker.email_subject
+            content = email_maker.email_object
+            send_email(request, customer_email, subject, content)
+
+        except Exception as e:
+            print(str(e))
+
+    # user cancelled the push request
+    elif response['ResultCode'] == '1032':
+        status = "You cancelled our payment request."
+
+    # user did not respond to push request so it timedout
+    elif response['ResultCode'] == '1037':
+        status = "We were unable to get any response from you for the payment request."
+
+    context = {"cartItems":cartItems, "status":status}
+    return render(request, "cart/thank_you.html",context)
+
 
 
 
