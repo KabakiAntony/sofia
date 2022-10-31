@@ -20,13 +20,15 @@
             <h4>Top selling items</h4>
             <div class="product-grid">
                 {% for product in products %} 
-                <a href="{% url 'products:detail' slug=product.slug %}">
-                 <div class="product">
-                     <img class="product_image" src="{{product.thumb.url}}" width="600" height="400">
-                     <h2>{{ product.name }}</h2>
-                     <h4>Kes {{ product.price }}</h4>
-                     <button class="btn mobile-product-view">view</button>
-                 </div></a>
+                    {% if product.available %}
+                    <a href="{% url 'products:detail' slug=product.slug %}">
+                    <div class="product">
+                        <img class="product_image" src="{{product.main_image.url}}" width="600" height="400">
+                        <h2>{{ product.short_name }}</h2>
+                        <h4>Kes {{ product.price }}</h4>
+                        <button class="btn mobile-product-view">view</button>
+                    </div></a>
+                    {% endif %}
                  {% endfor %}
              </div>
         </div>

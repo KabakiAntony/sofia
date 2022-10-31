@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
 
 {% include 'mobile_search.html' %}
@@ -7,12 +9,21 @@
         <div class="product-details">
             <div class="product-wrapper">
                 <div class="product-image">
-                    <img src="{{product.thumb.url}}"  width="600" height="400">
+                    <img  src="{{product.main_image.url}}" id="main-image">
+                    {% if product.productimage_set.all %}
+                    <div class="images-grid">
+                        {% for productImage in product.productimage_set.all %}
+                            <img src="{{productImage.thumb.url}}" data-other_image_src="{{productImage.thumb.url}}" class="other-image">
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
+                
                 <div class="product-information">
                         <h2 id="product-name" data-product_name="{{ product.name }}">{{ product.name }}</h2>
                         <p>{{ product.description.capitalize }}</p>
                         <h4 class="price">Kes {{ product.price }}</h4>
+                        <p style="margin-bottom:20px;">Only <strong>({{ product.stock }})</strong> remaining, hurry while stocks last.</p>
                         <button data-product={{ product.id }}  data-action="add" class="btn update-cart">Add to cart</button>
                 </div>
             </div>
@@ -29,4 +40,5 @@
         </div>
         <!-- <div class="related-products"></div> This will be implemented later -->
     </div>
+    <script src="{% static 'js/page/product_detail.js' %}"></script>
 {% endblock content %}
