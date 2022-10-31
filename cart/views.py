@@ -90,6 +90,12 @@ def process_order(request):
     cart.transaction_id = transaction_id
 
     email_maker.transaction_id = transaction_id # set trx id
+    shipping_or_pickup = data['shipping_info']['shipping_or_pickup']
+    shipping_or_pickup_info = {
+       "city_town_area" : data['shipping_info']['city_town_area'],
+        "street_lane_other" : data['shipping_info']['street_lane_other'],
+        "apartment_suite_building" : data['shipping_info']['apartment_suite_building'], 
+    }
     
     if (total == cart.get_pickup_n_cart_total) or (total == cart.get_shipping_n_cart_total):
         cart.complete = True
@@ -133,6 +139,8 @@ def process_order(request):
         'items':items,
         'current_site':current_site,
         'protocol':protocol,
+        'shipping_or_pickup':shipping_or_pickup,
+        'shipping_or_pickup_info':shipping_or_pickup_info,
         })   
 
     email_maker.customer_email = customer.email
@@ -169,15 +177,18 @@ def validify_phone_no(phone_number):
     return phone_number
 
 
-def thank_you(request):
-    cartItems = 0
+def payment_status(request):
+    data = cart_data(request)
+    cartItems = data['cartItems']
     req_id = email_maker.checkout_req_id
-    # wait for one minute and check the status of the transaction
-    time.sleep(30) 
+    
+    # wait for thirty seconds and check transaction
+    time.sleep(30)
     response = handler.query_transaction_status(req_id)
 
     # payment was processed successfully
     if response['ResultCode'] == '0':
+        code = response["ResultCode"]
         status = "Your payment has been processed successfully."
         # only send order email on successful payment.
         try:
@@ -187,18 +198,25 @@ def thank_you(request):
             send_email(request, customer_email, subject, content)
 
         except Exception as e:
+            # log this error
             print(str(e))
 
     # user cancelled the push request
     elif response['ResultCode'] == '1032':
+        code = response["ResultCode"]
         status = "You cancelled our payment request."
 
     # user did not respond to push request so it timedout
     elif response['ResultCode'] == '1037':
+        code = response["ResultCode"]
         status = "We were unable to get any response from you for the payment request."
 
-    context = {"cartItems":cartItems, "status":status}
-    return render(request, "cart/thank_you.html",context)
+    else:
+        code = response["ResultCode"]
+        status = "We did not get a timely response from M-pesa on the status of your payment."
+
+    context = {"cartItems":cartItems, "status":status, "code":code}
+    return render(request, "cart/order_status.html",context)
 
 
 
