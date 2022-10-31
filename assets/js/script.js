@@ -1,9 +1,12 @@
+import { showAnonMessage }  from './page/utils.js'
+
+
 const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
-let anon_messages = document.querySelector(".anon-messages");
 let update_buttons = document.getElementsByClassName('update-cart');
 let submit_buttons = document.getElementsByClassName('btn');
+let anon_message = "";
 
 
 if (dropdownButton) {
@@ -16,14 +19,6 @@ if(messages){
   setTimeout(()=>{
     messages.style.display = "none"
   }, 5000)
-}
-
-function unloadAnonMessages(class_type){
-  if(anon_messages){
-    setTimeout(()=>{
-      anon_messages.classList.remove(class_type);
-    }, 5000, class_type)
-  }
 }
 
 /* 
@@ -81,9 +76,8 @@ function addCookieItem(productId, productName, action){
 		}else{
 			cart[productId]['quantity'] += 1
 		}
-    anon_messages.classList.add('success');
-    anon_messages.innerHTML = `1 unit of ${productName} added successfully.`;
-    unloadAnonMessages('success');
+    anon_message= `1 unit of ${productName} added successfully.`;
+    showAnonMessage('success', anon_message);
 	}
 
 	if (action == 'remove'){
@@ -92,20 +86,17 @@ function addCookieItem(productId, productName, action){
 		if (cart[productId]['quantity'] <= 0){
 			delete cart[productId];
 		}
-    anon_messages.classList.add('error');
-    anon_messages.innerHTML = `1 unit of ${productName} removed.`;
-    unloadAnonMessages('error');
+    anon_message = `1 unit of ${productName} removed.`;
+    showAnonMessage('error', anon_message);
 	}
 
   if (action == 'delete'){
     delete cart[productId];
-    anon_messages.classList.add('error');
-    anon_messages.innerHTML = `${productName} removed entirely.`;
-    unloadAnonMessages('error');
+    anon_message = `${productName} removed entirely.`;
+    showAnonMessage('error', anon_message);
   }
 	document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
-	
-	 location.reload();
+	location.reload();
   /*
   use ajax to get the cart total without having to 
   reload the page, right now this works but it is a 
@@ -113,14 +104,4 @@ function addCookieItem(productId, productName, action){
   */
 }
 
-// // Upload Image
-// const photoInput = document.querySelector("#avatar");
-// const photoPreview = document.querySelector("#preview-avatar");
-// if (photoInput)
-//   photoInput.onchange = () => {
-//     const [file] = photoInput.files;
-//     if (file) {
-//       photoPreview.src = URL.createObjectURL(file);
-//     }
-//   };
 
