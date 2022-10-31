@@ -9,5 +9,5 @@ urlpatterns = [
     path('checkout/', views.checkout, name="checkout"),
     path('process_order/', views.process_order, name="process_order"),
     path('callback/', views.mpesa_callback, name="callback"),
-    path('thank-you/', views.thank_you, name="thank_you"),
+    path('payment-status/', views.payment_status, name="payment_status"),
 ]
