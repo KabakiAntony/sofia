@@ -1,4 +1,3 @@
-from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
@@ -53,9 +52,7 @@ class User(AbstractUser):
   
 
 class Customer(models.Model):
-    """ A user is not automatically a customer a user only becomes a customer
-    when they make an order.
-    """
+    """ this holds customer information """
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=255, null=True)
     email = models.EmailField(unique=True, max_length=255, null=True)
