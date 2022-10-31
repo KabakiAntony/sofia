@@ -13,6 +13,9 @@ from journaling.tokens import account_activation_token, password_reset_token
 
 
 def signup_user(request):
+    data = cart_data(request)
+    cartItems = data['cartItems']
+
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
@@ -25,13 +28,14 @@ def signup_user(request):
             email = form.cleaned_data.get('email')
 
             name = " ".join([first_name, last_name])
+            # create a customer on user creation
             Customer.objects.create(user=user,name=name,email=email)
 
             # send activation email instead of signing the user in.
             current_site = get_current_site(request)
             protocol = request.scheme
             email_subject = f""" Welcome and verfiy your email."""
-            email_content = render_to_string("accounts/verify_email.html",{
+            email_content = render_to_string("accounts/verify_email_body.html",{
                 'user':user,
                 'current_site':current_site,
                 'uid':urlsafe_base64_encode(force_bytes(user.pk)),
@@ -51,8 +55,6 @@ def signup_user(request):
     
     else:
         form = MyUserCreationForm()
-        data = cart_data(request)
-        cartItems = data['cartItems']
 
     context = {'form': form, 'cartItems':cartItems}
     return render(request, 'accounts/signup.html', context)
@@ -112,6 +114,7 @@ def verify_email(request, uidb64, token):
         user.email_confirmed = True
         user.save()
         login(request, user)
+        messages.add_message(request, messages.SUCCESS, "You have successfully verified your email, welcome.")
     else:
         error_message = 'Account activation link is invalid.'
         context = {'cartItems':cartItems, "message": error_message}
@@ -154,8 +157,9 @@ def send_reset_link(request):
                     # if for some reason the email was not sent
                     print(str(e))
 
-            message = "If this email is know to us, an email will be sent to your account shortly."
-            messages.add_message(request, messages.SUCCESS, f'Email {email} submitted successfully')
+            message = "If this email is know to us, you will receive reset instructions shortly."
+            messages.add_message(request, messages.SUCCESS, 
+                f'{email} has been submitted successfully. {message}')
 
         else:
             messages.add_message(request, messages.WARNING, "Email was not submitted")
