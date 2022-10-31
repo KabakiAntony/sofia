@@ -58,6 +58,9 @@ class CartItems(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+    
+    class Meta:
+        verbose_name_plural ="Cart Items"
 
 
 class ShippingInformation(models.Model):
@@ -72,4 +75,21 @@ class ShippingInformation(models.Model):
 
     def __str__(self):
         return self.customer.email
+    
+    class Meta:
+        verbose_name_plural = "Shipping Information"
+
+
+class OrderStatus(models.Model):
+    """ this will hold order status"""
+    
+    transaction_id = models.CharField(max_length=150)
+    status = models.CharField(max_length=50)
+    result_code = models.CharField(max_length=2)
+
+    def __str__(self):
+        return self.status
+
+    class Meta:
+        verbose_name_plural = "Order Status"
 
