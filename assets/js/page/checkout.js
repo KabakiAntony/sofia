@@ -1,3 +1,5 @@
+import { showAnonMessage }  from './utils.js';
+
 let url = '/cart/process_order/';
 let form = document.getElementById('shipping-info-form');
 let pay_button = document.querySelector('.pay');
@@ -8,21 +10,19 @@ let pickup_div = document.querySelector('.pickup-info');
 let email_input = document.getElementById("email");
 let mobile_input =  document.getElementById("mobile-no");
 let city_town_area_input = document.getElementById("city-town-area");
-let delivery_pickup_radio = document.getElementsByName("shipping-or-pickup");
+let delivery_pickup_radio = document.getElementsByName("shipping_or_pickup");
 let desktop_email_phone_error_span = document.getElementById('email-or-phone-error');
 let city_town_area_error_span = document.getElementById('city-area-error');
 let mobile_email_error_span = document.getElementById("m-email-error");
 let mobile_number_error_span = document.getElementById("m-mobile-error");
-let radio_selection_error_span = document.getElementById("shipping-or-pickup-selection");
 let shipping_option = document.getElementById('shipping_option');
 let pickup_option = document.getElementById('pickup_option');
 let pickup_total = document.getElementById('pickup-hidden-total-field');
 let shipping_total = document.getElementById('shipping-hidden-total-field');
-
+let anon_message = "";
 let total = 0;
 
 let viewportWidth = window.innerWidth;
-
 
 form.addEventListener('submit',(e)=>{
     e.preventDefault();
@@ -59,7 +59,9 @@ function submitFormData(){
         "city_town_area":null,
         "street_lane_other":null,
         "apartment_suite_building":null,
-        "mobile_no":null
+        "mobile_no":null,
+        "shipping_or_pickup":null,
+
     }
 
     if( user == "AnonymousUser"){
@@ -70,12 +72,14 @@ function submitFormData(){
         shippingInfo.apartment_suite_building = form.apartment_suite_building.value
         shippingInfo.street_lane_other = form.street_lane_other.value
         shippingInfo.city_town_area = form.city_town_area.value
+        shippingInfo.shipping_or_pickup = form.shipping_or_pickup.value
     }
     else{
         shippingInfo.mobile_no = form.mobile_no.value
         shippingInfo.apartment_suite_building = form.apartment_suite_building.value
         shippingInfo.street_lane_other = form.street_lane_other.value
         shippingInfo.city_town_area = form.city_town_area.value
+        shippingInfo.shipping_or_pickup = form.shipping_or_pickup.value
     }
 
 
@@ -88,12 +92,13 @@ function submitFormData(){
             return response.json();
             })
             .then((data) =>{
-            alert('Transaction completed');
-            /* use better notification methods get a better response message from the backend */
-
-            cart = {};
-            document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
-            location.replace("/");
+                if(data === "0"){
+                    anon_message = "Please check your mpesa phone for a payment request from us."
+                    showAnonMessage("info", anon_message);
+                    cart = {};
+                    document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
+                    location.replace("/cart/payment-status/");
+                }
         })
 
 }
@@ -105,7 +110,6 @@ shipping_radio.addEventListener('click', ()=>{
     pickup_option.classList.remove('show');
     pickup_div.classList.remove('show');
     total = shipping_total.dataset.shipping_total ;
-    
 })
 
 pickup_radio.addEventListener('click', ()=>{

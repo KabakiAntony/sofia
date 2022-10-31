@@ -1,20 +1,10 @@
 from django.contrib import admin
-from accounts.models import User, Customer
-from products.models import Product, Category
-from cart.models import Cart, CartItems, ShippingInformation
-
 
 class JournalingAdmin(admin.AdminSite):
     site_header = 'Journaling Administration'
     site_title = 'Journaling Admin'
     index_title = 'Journaling Admin'
+    site_url = None
 
-admin_site = JournalingAdmin(name='admin')
 
-admin_site.register(User)
-admin_site.register(Customer)
-admin_site.register(Category)
-admin_site.register(Product)
-admin_site.register(Cart)
-admin_site.register(CartItems)
-admin_site.register(ShippingInformation)
+journaling_admin_site = JournalingAdmin(name='admin')

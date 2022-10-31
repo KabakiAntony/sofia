@@ -43,21 +43,21 @@
                     </div>
                 </div>
             </div>
-            <h4>Select if you want it delivered to you or pickup</h4>
+            <h4>Delivery or pickup option</h4>
             <hr>
             <div class="shipping-or-pickup">
                 <label class="label-radio" for="shipping">
-                    <input type="radio" name="shipping-or-pickup" id="shipping" value="shipping" required>Delivery
+                    <input type="radio" name="shipping_or_pickup" id="shipping" value="shipping" required>Delivery
                 </label>
                 <label class="label-radio" for="pickup">
-                    <input type="radio" name="shipping-or-pickup" id="pickup" value="pickup">Pickup
+                    <input type="radio" name="shipping_or_pickup" id="pickup" value="pickup">Pickup
                 </label>
             </div>
-            <h4>Delivery / Pickup Information</h4>
-            <hr>
             <div class="pickup-info">
-                <p>Pickup is only available in Nairobi CBD,</p>
-                <p>That comes with a small cost of <strong>Kes 100</strong></p>
+                <small>Pickup is only available in Nairobi CBD at the following location,</small>
+                <p><strong>The Bazaar plaza, 7th floor</strong></p>
+                <p><strong>Crystal Suites</strong></p>
+                <p><strong>Suite 702</strong></p>
             </div>
             <div class="shipping-info">
                 <p>Use the fields below to be descriptive as possible</p>
@@ -69,6 +69,7 @@
                 <label>Apartment / Suite / Building</label>
                 <input type="text" name="apartment_suite_building" placeholder="Edmerc hse no 1001 or Ebenezer rm 202" id="apartment-suite-building">
             </div>
+            <hr>
             <div class="p-btn">
                 <button type="submit" class="btn-c continue" id="continue-btn">Continue</button>
             </div>
@@ -79,7 +80,7 @@
             <div class="order-summary-holder">
                 {% for item in items %}
                     <div class="item-holder">
-                        <div class="summary-image item"><img src="{{item.product.thumb.url}}"></div>
+                        <div class="summary-image item"><img src="{{item.product.main_image.url}}"></div>
                         <div class="summary-name item">{{item.product.name}}</div>
                         <div class="summary-quantity item">{{ item.quantity }}</div>
                         <div class="summary-total item">{{ item.get_total }}</div>
@@ -116,6 +117,5 @@
         </div>
         
     </div>
-
-    <script src="{% static 'js/page/checkout.js' %}"></script>
+    <script src="{% static 'js/page/checkout.js' %}" type="module"></script>
 {% endblock content %}

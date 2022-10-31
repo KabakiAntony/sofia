@@ -1,8 +1,9 @@
 <div style="padding:10px; background-color: #ffffff; width:100%; margin:10px 0 0 0;">
-    <h4>Hey {{ customer.user.first_name }},</h4>
-    <h4>Thank for shopping on Journaling Therapy,  Your order has been successfully confirmed.</h4>
-    <p>All our items have a next day delivery.</p>
-    <h4>You ordered for.</h4>
+    <p>Hey {{ customer.name.capitalize }},</p>
+    <br>
+    <p>Thank for shopping on Journaling Therapy, your order has been received and payment confirmed.
+        Your order will be delivered in 24hours.</p>
+    <p>You ordered for.</p>
     <table style="font-family:'Helevetica Neue', 'Helvetica', 'Arial', 'sans-serif'; font-size:13px; border-collapse: collapse; border: 1px solid black;"
     width="90%" cellspacing="0" cellpadding="0">
     <tr>
@@ -13,14 +14,60 @@
       </tr>
         {% for item in items %}
         <tr width="100%">
-            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.thumb.url}}"></td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.main_image.url}}"></td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{item.product.name}}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.quantity }}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.get_total }}</td>
         </tr>
         {% endfor %}
+        <tr>
+            <th></th>
+            <th></th>
+            <th style="border: 1px solid black;">Sub Total</th>
+            <th style="border: 1px solid black;">{{cart.get_cart_total}}</th>
+        </tr>
+        {% if shipping_or_pickup == "shipping"%}
+        <tr>
+            <th></th>
+            <th></th>
+            <th style="border: 1px solid black;">Shipping cost</th>
+            <th style="border: 1px solid black;">{{cart.get_shipping_amount}}</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th style="border: 1px solid black;">Total</th>
+            <th style="border: 1px solid black;">{{cart.get_shipping_n_cart_total}}</th>
+        </tr>
+        {% else %}
+        <tr>
+            <th></th>
+            <th></th>
+            <th style="border: 1px solid black;">Pickup cost</th>
+            <th style="border: 1px solid black;">{{cart.get_pickup_amount}}</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th></th>
+            <th style="border: 1px solid black;">Total</th>
+            <th style="border: 1px solid black;">{{cart.get_pickup_n_cart_total}}</th>
+        </tr>
+        {% endif %}
     </table>
-    
-    <h4>Thank you for shopping with us,</h4>
-    <h4>Journaling Therapy Team.</h4>
+    <br>
+    {% if shipping_or_pickup == "shipping"%}
+        <p>You have choosen to have the item delivered to the following location.</p>
+        <p><strong>{{shipping_or_pickup_info.city_town_area.capitalize}}</strong></p>
+        <p><strong>{{shipping_or_pickup_info.street_lane_other.capitalize}}</strong></p>
+        <p><strong>{{shipping_or_pickup_info.apartment_suite_building.capitalize}}</strong></p>
+    {% else %}
+        <p>You have choosen to pickup the item. </p>
+        <p><strong>Pickup is only available in Nairobi CBD at the following location,</strong></p>
+        <p><strong>The Bazaar plaza, 7th floor</strong></p>
+        <p><strong>Crystal Suites</strong></p>
+        <p><strong>Suite 702</strong></p>
+    {% endif %}
+    <br>
+    <p>Thank you,</p>
+    <p>Journaling Therapy Team.</p>
 </div>

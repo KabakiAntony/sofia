@@ -1,12 +1,14 @@
+from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
 from django.conf import settings
-from . import admin
+from .admin import journaling_admin_site
 from django.urls import path, include
 from products import views as home_page
 
 urlpatterns = [
-    path('admin/', admin.admin_site.urls),
+    path('admin/', journaling_admin_site.urls),
     path('accounts/', include('accounts.urls')),
     path('products/', include('products.urls')),
     path('cart/', include('cart.urls')),

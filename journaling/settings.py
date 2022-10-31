@@ -139,3 +139,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@journalingtherapy.co.ke')
 
+
+# trusted origin
+CSRF_TRUSTED_ORIGINS = []
