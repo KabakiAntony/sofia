@@ -1,3 +1,39 @@
 from django.contrib import admin
+from journaling.admin import journaling_admin_site
+from .models import Cart,CartItems,ShippingInformation,OrderStatus
 
-# Register your models here.
+
+class CartAdmin(admin.ModelAdmin):
+    empty_value_display = '-empty-'
+    list_display = ['id','transaction_id','customer','complete','date']
+    list_display_links = None
+    list_filter = ['complete', 'date']   
+
+
+class CartItemsAdmin(admin.ModelAdmin):
+    empty_value_display = '-empty-'
+    list_display = ['id','cart', 'product', 'quantity', 'date']
+    list_display_links = None
+    list_filter = ['date']
+
+
+class ShippingInfoAdmin(admin.ModelAdmin):
+    empty_value_display = '-empty-'
+    list_display = ['id','customer', 'cart', 'city_town_area', 'street_lane_other', 'apartment_suite_building', 'mobile_no', 'date']
+    list_display_links = None
+
+class OrderStatusAdmin(admin.ModelAdmin):
+    empty_value_display = '-empty-'
+    list_display = ['id','transaction_id', 'status', 'result_code']
+    list_display_links = None
+    list_filter = ['status', 'result_code', 'transaction_id']
+
+
+journaling_admin_site.register(Cart, CartAdmin)
+journaling_admin_site.register(CartItems, CartItemsAdmin)
+journaling_admin_site.register(ShippingInformation, ShippingInfoAdmin)
+journaling_admin_site.register(OrderStatus, OrderStatusAdmin)
+
+
+
+
