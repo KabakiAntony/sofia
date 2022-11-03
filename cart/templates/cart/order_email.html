@@ -14,7 +14,7 @@
       </tr>
         {% for item in items %}
         <tr width="100%">
-            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.main_image.url}}"></td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.thumb.url}}"></td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{item.product.name}}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.quantity }}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.get_total }}</td>
