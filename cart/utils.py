@@ -36,7 +36,7 @@ def cookie_cart(request):
                         'name':product.name,
                         'price':product.price,
                         'description':product.description,
-                        'thumb':product.thumb,
+                        'thumb':product.main_image,
                         'slug':product.slug,
                     },
                     'quantity':cart[i]['quantity'],

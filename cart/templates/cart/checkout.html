@@ -76,11 +76,13 @@
             </form>
         </div>
         <div class="order-summary-wrapper">
-            <h1>Cart summary - you have  ({{ cart.get_cart_items }})  items</h1><hr>
+            <h1>Cart summary - you have  ({{ cart.get_cart_items }})
+                {% if cart.get_cart_items > 1 %}items{% else %} item {% endif %} in the cart</p>
+            </h1><hr>
             <div class="order-summary-holder">
                 {% for item in items %}
                     <div class="item-holder">
-                        <div class="summary-image item"><img src="{{item.product.main_image.url}}"></div>
+                        <div class="summary-image item"><img src="{{item.product.thumb.url}}"></div>
                         <div class="summary-name item">{{item.product.name}}</div>
                         <div class="summary-quantity item">{{ item.quantity }}</div>
                         <div class="summary-total item">{{ item.get_total }}</div>
