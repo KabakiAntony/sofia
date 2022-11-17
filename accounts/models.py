@@ -61,6 +61,11 @@ class Customer(models.Model):
         return self.email
 
 
+    @property
+    def get_first_name(self):
+        return self.name.split()[0]
+
+
 
 
 
