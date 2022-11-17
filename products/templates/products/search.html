@@ -12,7 +12,7 @@
             <a href="{% url 'products:detail' slug=product.slug %}">
              <div class="product">
                  <img class="product_image" src="{{product.main_image.url}}">
-                 <h2>{{ product.name }}</h2>
+                 <h2>{{ product.name.capitalize }}</h2>
                  <h4>Kes {{ product.price }}</h4>
              </div></a>
             {% endfor %}
