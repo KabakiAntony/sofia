@@ -1,6 +1,11 @@
 from django.contrib import admin
 from journaling.admin import journaling_admin_site
-from .models import Product, Category, ProductImage
+from .models import Product, Category, ProductImage, GoesWellWith
+
+
+class GoesWellWithInline(admin.TabularInline):
+    model = GoesWellWith
+    fk_name = "product_one"
 
 
 class ProductImageInline(admin.TabularInline):
@@ -12,7 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ['id','name','description','category','price', 'stock', 'available', 'date']
     list_display_links = ['name']
     list_filter = ['category']
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline, GoesWellWithInline]
 
 
 class ProductImageAdmin(admin.ModelAdmin):
@@ -29,3 +34,4 @@ class CategoryAdmin(admin.ModelAdmin):
 journaling_admin_site.register(Product,ProductAdmin)
 journaling_admin_site.register(ProductImage,ProductImageAdmin)
 journaling_admin_site.register(Category, CategoryAdmin)
+journaling_admin_site.register(GoesWellWith)
