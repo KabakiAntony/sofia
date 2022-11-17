@@ -16,23 +16,23 @@
                 <div class="item">
                     <div><a href="{% url 'products:detail' slug=item.product.slug %}">
                         <div class="cart-item-image">
-                            <img src="{{item.product.thumb.url}}" width="600" height="400">
+                            <img src="{{item.product.thumb.url}}">
                         </div>
                     </a></div>
                     <div class="item-details mobile_hidden_details">
-                        <h1 id="product-name" data-product_name="{{ item.product.name }}">{{ item.product.name }}</h1>
+                        <h1 id="product-name">{{ item.product.name.capitalize }}</h1>
                         <p>{{ item.product.description.capitalize }}</p>
                     </div>
                     <div>{{ item.product.price }}</div>
                     <div class="increase-decrease-items">
-                        <div data-product={{item.product.id}} data-action="add" class="increase-items update-cart">+</div>
+                        <div data-product={{item.product.id}} data-action="add" data-product_name="{{ item.product.name.capitalize }}" class="increase-items update-cart">+</div>
                         <div class="item-quantity">{{ item.quantity }}</div>
-                        <div data-product={{item.product.id}} data-action="remove" class="reduce-items update-cart">-</div>
+                        <div data-product={{item.product.id}} data-action="remove" data-product_name="{{ item.product.name.capitalize }}" class="reduce-items update-cart">-</div>
                     </div>
                     <div>{{ item.get_total }}</div>
                 </div>
                 <div  class="item-action-buttons">
-                    <button data-product={{item.product.id}} data-action="delete" class="remove-from-cart btn update-cart">
+                    <button data-product={{item.product.id}} data-action="delete" data-product_name="{{ item.product.name.capitalize }}" class="remove-from-cart btn update-cart">
                         <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105.16 122.88">
                             <path class="cls-1" d="M11.17,37.16H94.65a8.4,8.4,0,0,1,2,.16,5.93,5.93,0,0,1,2.88,1.56,5.43,
                             5.43,0,0,1,1.64,3.34,7.65,7.65,0,0,1-.06,1.44L94,117.31v0l0,.13,0,.28v0a7.06,7.06,0,0,1-.2.9v0l0,

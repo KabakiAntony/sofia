@@ -1,9 +1,7 @@
 <div style="padding:10px; background-color: #ffffff; width:100%; margin:10px 0 0 0;">
-    <p>Hey {{ customer.get_first_name.capitalize }},</p>
-    <br>
-    <p>Thank for shopping on Journaling Therapy, your order has been received and payment confirmed.
-        Your order will be delivered in 24hours.</p>
-    <p>You ordered for.</p>
+    <p>Hey,</p>
+    <p>We have received an order from  {{ customer.get_first_name.capitalize }}, of email {{ customer.email }} and phone no {{ shipping.mobile_no }} </p>
+    <p>The customer has ordered the following items</p>
     <table style="font-family:'Helevetica Neue', 'Helvetica', 'Arial', 'sans-serif'; font-size:13px; border-collapse: collapse; border: 1px solid black;"
     width="90%" cellspacing="0" cellpadding="0">
     <tr>
@@ -15,7 +13,7 @@
         {% for item in items %}
         <tr width="100%">
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;"><img style="width: 3.5rem;height:3.5rem; border-radius: 0.5rem;" src="{{protocol}}://{{ current_site.domain }}{{item.product.thumb.url}}"></td>
-            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{item.product.name}}</td>
+            <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{item.product.name.capitalize}}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.quantity }}</td>
             <td style="width:25%; border: 1px solid #000; text-align: center; padding:10px; vertical-align: bottom;">{{ item.get_total }}</td>
         </tr>
@@ -56,12 +54,12 @@
     </table>
     <br>
     {% if shipping_or_pickup == "shipping"%}
-        <p>You have choosen to have the item delivered to the following location.</p>
+        <p>The have choosen to have the item delivered to the following location.</p>
         <p><strong>{{shipping_or_pickup_info.city_town_area.capitalize}}</strong></p>
         <p><strong>{{shipping_or_pickup_info.street_lane_other.capitalize}}</strong></p>
         <p><strong>{{shipping_or_pickup_info.apartment_suite_building.capitalize}}</strong></p>
     {% else %}
-        <p>You have choosen to pickup the item. </p>
+        <p>They have choosen to pickup the item. </p>
         <p><strong>Pickup is only available in Nairobi CBD at the following location,</strong></p>
         <p><strong>The Bazaar plaza, 7th floor</strong></p>
         <p><strong>Crystal Suites</strong></p>
@@ -69,5 +67,4 @@
     {% endif %}
     <br>
     <p>Thank you,</p>
-    <p>Journaling Therapy Team.</p>
 </div>
