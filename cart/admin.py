@@ -1,6 +1,7 @@
 from django.contrib import admin
 from journaling.admin import journaling_admin_site
-from .models import Cart,CartItems,ShippingInformation,OrderStatus
+from .models import Cart,CartItems,ShippingInformation,OrderStatus,ReceivedOrder
+from django.urls import path
 
 
 class CartAdmin(admin.ModelAdmin):
@@ -29,11 +30,22 @@ class OrderStatusAdmin(admin.ModelAdmin):
     list_filter = ['status', 'result_code', 'transaction_id']
 
 
+class ReceivedOrderAdmin(admin.ModelAdmin):
+    model = ReceivedOrder
+
+    def get_urls(self):
+        view_name = '{}_{}_changelist'.format(
+            self.model._meta.app_label, self.model._meta.model_name)
+        return [
+            path('receivedOrders/', ReceivedOrder.show_orders, name=view_name)
+        ]
+
+
 journaling_admin_site.register(Cart, CartAdmin)
 journaling_admin_site.register(CartItems, CartItemsAdmin)
 journaling_admin_site.register(ShippingInformation, ShippingInfoAdmin)
 journaling_admin_site.register(OrderStatus, OrderStatusAdmin)
-
+journaling_admin_site.register(ReceivedOrder, ReceivedOrderAdmin)
 
 
 
