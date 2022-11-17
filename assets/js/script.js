@@ -27,9 +27,13 @@ cannot use an arrow function here since
 */
 for (let i=0; i< update_buttons.length; i++){
     update_buttons[i].addEventListener('click', function(){
+    
     let product_id = this.dataset.product;
     let action = this.dataset.action;
-    let product_name = document.getElementById('product-name').dataset.product_name;
+    let detail_pg_product_name = document.getElementById('product-name').dataset.product_name;
+    let cart_pg_product_name = this.dataset.product_name;
+    let product_name = "";
+    product_name = detail_pg_product_name || cart_pg_product_name;
 
     if(user === "AnonymousUser"){
       addCookieItem(product_id,product_name,action);
@@ -70,13 +74,14 @@ function updateCart(productId, update_action){
 
 /* update cart for un-authenticated users */
 function addCookieItem(productId, productName, action){
+
 	if (action == 'add'){
 		if (cart[productId] == undefined){
       cart[productId] = {'quantity':1}      
 		}else{
 			cart[productId]['quantity'] += 1
 		}
-    anon_message= `1 unit of ${productName} added successfully.`;
+    anon_message= `${productName} added successfully.`;
     showAnonMessage('success', anon_message);
 	}
 
@@ -86,7 +91,7 @@ function addCookieItem(productId, productName, action){
 		if (cart[productId]['quantity'] <= 0){
 			delete cart[productId];
 		}
-    anon_message = `1 unit of ${productName} removed.`;
+    anon_message = `${productName} removed.`;
     showAnonMessage('error', anon_message);
 	}
 

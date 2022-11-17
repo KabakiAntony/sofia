@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from .forms import MyUserCreationForm, UserSetNewPasswordForm, UserForgotPasswordForm
 from .models import User,Customer
 from cart.utils import cart_data
-from journaling.emails import send_email
+from journaling.emails import _send_email
 from journaling.tokens import account_activation_token, password_reset_token
 
 
@@ -26,11 +26,11 @@ def signup_user(request):
             first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
             email = form.cleaned_data.get('email')
-
             name = " ".join([first_name, last_name])
-            # create a customer on user creation
-            Customer.objects.create(user=user,name=name,email=email)
 
+            # create a customer on user creation
+            customer, created = Customer.objects.update_or_create(user=user,name=name,email=email)
+    
             # send activation email instead of signing the user in.
             current_site = get_current_site(request)
             protocol = request.scheme
@@ -44,7 +44,8 @@ def signup_user(request):
             })
             
             try:
-                send_email(request, email, email_subject, email_content)
+                _send_email(request, email, email_subject, email_content)
+                
                 return  render(request, 'accounts/check_email.html', {'cartItems':cartItems})
                 
             except Exception as e:
@@ -152,7 +153,7 @@ def send_reset_link(request):
                 })
                 
                 try:
-                    send_email(request, email, email_subject, email_content)
+                    _send_email(request, email, email_subject, email_content)
                 except Exception as e:
                     # if for some reason the email was not sent
                     print(str(e))

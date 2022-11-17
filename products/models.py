@@ -15,10 +15,10 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=150, unique=True)
     slug = models.SlugField()
-    description = models.TextField(max_length=255, blank=True)
+    description = models.TextField(max_length=500, blank=True)
     price = models.DecimalField(max_digits=7, decimal_places=0)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     main_image = models.ImageField(default='default.jpeg', blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     stock = models.PositiveIntegerField(default=1)
     available = models.BooleanField(default=True)
@@ -41,5 +41,15 @@ class ProductImage(models.Model):
         return self.product.name
 
     class Meta:
-        verbose_name_plural = "Other Product Images"
+        verbose_name_plural = "Other product images"
 
+
+class GoesWellWith(models.Model):
+    product_one = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="following")
+    product_two = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="followers")
+
+    def __str__(self):
+        return f"{self.product_one.name} goes well with -> {self.product_two.name}"
+
+    class Meta:
+        verbose_name_plural = "Products that this product goes well with"

@@ -1,6 +1,7 @@
 import json
 import time
 import datetime
+import uuid
 from django.contrib import messages
 from django.template.loader import render_to_string  
 from django.shortcuts import render, redirect
@@ -12,7 +13,7 @@ from products.models import Product
 from .utils import cart_data, guest_cart
 from .order_email_objects import EmailInfo
 from cart.utils import cart_data
-from journaling.emails import send_email
+from journaling.emails import _send_email
 from journaling.mpesa_handler import MpesaHandler
 
 handler = MpesaHandler()
@@ -44,7 +45,7 @@ def update_item(request):
 
     elif action == "remove":
         cartItem.quantity = (cartItem.quantity - 1)
-        messages.add_message(request, messages.ERROR, f"1 unit of {cartItem} removed from cart.")
+        messages.add_message(request, messages.ERROR, f"{cartItem} removed from cart.")
 
     cartItem.save()
 
@@ -76,7 +77,7 @@ def process_order(request):
     cart = data['cart']
     cartItems = data['cartItems']
     
-    transaction_id = datetime.datetime.now().timestamp()
+    transaction_id = uuid.uuid4()
     data = json.loads(request.body)
 
     if request.user.is_authenticated:
@@ -101,7 +102,7 @@ def process_order(request):
         cart.complete = True
     cart.save()
 
-    shipping, created = ShippingInformation.objects.get_or_create(
+    shipping, created = ShippingInformation.objects.update_or_create(
             customer=customer,
             cart=cart,
             city_town_area = data['shipping_info']['city_town_area'],
@@ -109,8 +110,6 @@ def process_order(request):
             apartment_suite_building = data['shipping_info']['apartment_suite_building'],
             mobile_no=data['shipping_info']['mobile_no']
         )
-
-    shipping.save()
 
     valid_phone_no = validify_phone_no(data['shipping_info']['mobile_no'])
 
@@ -144,6 +143,19 @@ def process_order(request):
         })   
 
     email_maker.customer_email = customer.email
+    
+    email_maker.admin_email_object = render_to_string("cart/admin_order_email.html",
+        {
+        'customer':customer,
+        'shipping':shipping,
+        'cart':cart,
+        'cartItems':cartItems,
+        'items':items,
+        'current_site':current_site,
+        'protocol':protocol,
+        'shipping_or_pickup':shipping_or_pickup,
+        'shipping_or_pickup_info':shipping_or_pickup_info,
+        })   
 
     return JsonResponse(response_code, safe=False)
     
@@ -162,11 +174,6 @@ def mpesa_callback(request):
         else:
             result_code = 1
         
-        OrderStatus.objects.create(
-            transaction_id = email_maker.transaction_id,
-            status=status,
-            result_code = result_code
-        )
     return JsonResponse("Ok", safe=False)
 
 
@@ -183,7 +190,7 @@ def payment_status(request):
     req_id = email_maker.checkout_req_id
     
     # wait for thirty seconds and check transaction
-    time.sleep(30)
+    time.sleep(15)
     response = handler.query_transaction_status(req_id)
 
     # payment was processed successfully
@@ -195,7 +202,17 @@ def payment_status(request):
             customer_email = email_maker.customer_email
             subject = email_maker.email_subject
             content = email_maker.email_object
-            send_email(request, customer_email, subject, content)
+            _send_email(request, customer_email, subject, content)
+
+            # create order status object
+            OrderStatus.objects.create(
+            transaction_id = email_maker.transaction_id,
+            status=status,
+            result_code = code)
+
+            admin_content = email_maker.admin_email_object
+            admin_subject = "We have received and order."
+            _send_email(request, "kabaki.antony@gmail.com", admin_subject, admin_content)
 
         except Exception as e:
             # log this error

@@ -5,7 +5,12 @@ class EmailInfo:
         self.__customer_email = ""
         self.__transaction_id = ""
         self.__checkout_req_id = ""
+        self.__admin_email_object = ""
 
+
+    @property
+    def admin_email_object(self):
+        return self.__admin_email_object
 
     @property
     def checkout_req_id(self):
@@ -46,4 +51,9 @@ class EmailInfo:
     @transaction_id.setter
     def transaction_id(self, id):
         self.__transaction_id = id
+
+
+    @admin_email_object.setter
+    def admin_email_object(self, object):
+        self.__admin_email_object = object
 
