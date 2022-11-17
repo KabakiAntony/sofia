@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import Customer
 from products.models import Product
+from django.http import HttpResponse
 
 
 class Cart(models.Model):
@@ -8,10 +9,10 @@ class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     date = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
-    transaction_id = models.CharField(max_length=150)
+    transaction_id = models.UUIDField(null=True,editable=False)
 
     def __str__(self):
-        return self.customer.email
+        return self.customer.email +"_cart_id_"+str(self.id)
 
     @property
     def get_cart_total(self):
@@ -93,3 +94,10 @@ class OrderStatus(models.Model):
     class Meta:
         verbose_name_plural = "Order Status"
 
+class ReceivedOrder(models.Model):
+    class Meta:
+        verbose_name_plural = "Received Orders"
+        # app_label = "ReceivedOrder"
+
+    def show_orders(request):
+        return HttpResponse("This is a custom view")
