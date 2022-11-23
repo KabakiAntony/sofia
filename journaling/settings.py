@@ -2,9 +2,7 @@ import os
 import environ
 from pathlib import Path
 
-env = environ.Env(
-    DEBUG=(bool, True)
-    )
+env = environ.Env(DEBUG=(bool, True))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -23,7 +21,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ka-journaling.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
+
 
 # Application definition
 
@@ -34,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'cart.apps.CartConfig',
@@ -105,6 +105,8 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+USE_L10N = True
+
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
@@ -141,4 +143,4 @@ DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@journalingtherapy.co.ke'
 
 
 # trusted origin
-CSRF_TRUSTED_ORIGINS = ['https://ka-journaling.onrender.com']
+CSRF_TRUSTED_ORIGINS = []
