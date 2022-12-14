@@ -33,7 +33,7 @@ class Cart(models.Model):
 
     @property
     def get_pickup_amount(self):
-        pickup_amount = 100
+        pickup_amount = 0
         return pickup_amount
     
     @property
