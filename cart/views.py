@@ -1,6 +1,6 @@
 import json
 import time
-import datetime
+import os
 import uuid
 from django.contrib import messages
 from django.template.loader import render_to_string  
@@ -14,10 +14,12 @@ from .utils import cart_data, guest_cart
 from .order_email_objects import EmailInfo
 from cart.utils import cart_data
 from journaling.emails import _send_email
-from journaling.mpesa_handler import MpesaHandler
+from journaling.kopokopoHandler import KopoKopoHandler
 
-handler = MpesaHandler()
+
+handler = KopoKopoHandler()
 email_maker = EmailInfo()
+
 
 def cart(request):
     data = cart_data(request)
@@ -87,7 +89,7 @@ def process_order(request):
     else:
         customer, cart = guest_cart(request, data)
     
-    total = float(data['personal_info']['total'])
+    total = int(data['personal_info']['total'])
     cart.transaction_id = transaction_id
 
     email_maker.transaction_id = transaction_id # set trx id
@@ -113,22 +115,21 @@ def process_order(request):
 
     valid_phone_no = validify_phone_no(data['shipping_info']['mobile_no'])
 
-    push_payload = {
-        "amount":1,
-        "phone_number":valid_phone_no
-    }
     # make stk push request to the number on file
-    response = handler.make_stk_push(push_payload)
-    
-    email_maker.checkout_req_id = response.get('CheckoutRequestID')
+    first_name = data['personal_info']['first_name']
+    last_name = data['personal_info']['last_name']
+    email = data['personal_info']['email']
 
-    response_code = response.get('ResponseCode')
-    
     # send email to customer and admin with the order attached.
     current_site = get_current_site(request)
     protocol = request.scheme
-    
 
+    callback_url = f"{protocol}://{current_site.domain}/cart/callback/"
+    
+    response = handler.make_stk_push(first_name, last_name, valid_phone_no, email, total, callback_url)
+
+    email_maker.checkout_req_url = response.headers.get('location')
+    
     email_maker.email_subject = """ Thank you for shopping with us."""
     email_maker.email_object = render_to_string("cart/order_email.html",
         {
@@ -157,22 +158,17 @@ def process_order(request):
         'shipping_or_pickup_info':shipping_or_pickup_info,
         })   
 
-    return JsonResponse(response_code, safe=False)
+    return JsonResponse(response.status_code, safe=False)
     
  
 @csrf_exempt
-def mpesa_callback(request):
-    """ receive response from mpesa  """
+def kopokopo_callback(request):
+    """ receive response from kopo kopo  """
     if request.method == 'POST':
         data = json.loads(request.body)
-        result_code = data['Body']["stkCallback"]["ResultCode"]
-        status = data['Body']["stkCallback"]["ResultDesc"]
-
-        if result_code == 0:
-            result_code = 0
-
-        else:
-            result_code = 1
+        messages.add_message(request, messages.INFO, 
+        "Please hold as we process your payment.")
+       
         
     return JsonResponse("Ok", safe=False)
 
@@ -180,22 +176,22 @@ def mpesa_callback(request):
 def validify_phone_no(phone_number):
     """ get a phone number and return a phone number in the format required"""
     if phone_number[0] == "0":
-        phone_number = "254" + phone_number[1:]
+        phone_number = "+254" + phone_number[1:]
     return phone_number
 
 
 def payment_status(request):
     data = cart_data(request)
     cartItems = data['cartItems']
-    req_id = email_maker.checkout_req_id
+    payment_status_url = email_maker.checkout_req_url
     
     # wait for thirty seconds and check transaction
-    time.sleep(15)
-    response = handler.query_transaction_status(req_id)
+    time.sleep(20)
+    response = handler.query_transaction_status(payment_status_url)
 
     # payment was processed successfully
-    if response['ResultCode'] == '0':
-        code = response["ResultCode"]
+    if response['data']['attributes']['status'] == 'Success':
+        code = "0"
         status = "Your payment has been processed successfully."
         # only send order email on successful payment.
         try:
@@ -218,19 +214,10 @@ def payment_status(request):
             # log this error
             print(str(e))
 
-    # user cancelled the push request
-    elif response['ResultCode'] == '1032':
-        code = response["ResultCode"]
-        status = "You cancelled our payment request."
+    elif response['data']['attributes']['status'] == 'Failed':
+        code = "1"
+        status = "We were unable to receive your payment."
 
-    # user did not respond to push request so it timedout
-    elif response['ResultCode'] == '1037':
-        code = response["ResultCode"]
-        status = "We were unable to get any response from you for the payment request."
-
-    else:
-        code = response["ResultCode"]
-        status = "We did not get a timely response from M-pesa on the status of your payment."
 
     context = {"cartItems":cartItems, "status":status, "code":code}
     return render(request, "cart/order_status.html",context)
