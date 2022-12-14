@@ -1,5 +1,4 @@
 from django.contrib import messages
-from journaling.settings import env
 from django.core.mail import EmailMessage
 
 def _send_email(request, receiver_email, the_subject, the_content):
