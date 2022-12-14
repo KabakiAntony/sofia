@@ -9,7 +9,6 @@ class KopoKopoHandler():
     app_secret = None
     auth_url = None
     stk_push_url = None
-    my_callback_url = None
     my_request_headers = None
     access_token_expiration = None
 
@@ -18,7 +17,6 @@ class KopoKopoHandler():
         """ initializing payment objects """
         self.app_id = env("KOPOKOPO_APP_ID")
         self.app_secret = env("KOPOKOPO_SECRET")
-        self.my_callback_url = env("CALLBACK_URL")
         self.auth_url = env("KOPOKOPO_BASE_URL")
         self.stk_push_url = env("KOPOKOPO_STK_API_URL")
         
@@ -70,7 +68,7 @@ class KopoKopoHandler():
 
 
     @Decorators.refreshToken
-    def make_stk_push(self, first_name, last_name, phone_number, email, amount):
+    def make_stk_push(self, first_name, last_name, phone_number, email, amount, my_call_back):
         """
         supply the client information and the stk push url
         """
@@ -91,7 +89,7 @@ class KopoKopoHandler():
                 "notes": "Pay Journaling",
             },
             "_links": {
-                "callback_url": f"{self.my_callback_url}",
+                "callback_url": f"{my_call_back}",
             }
         }
         response = requests.post(self.stk_push_url, json=request_data, headers=self.my_request_headers)
