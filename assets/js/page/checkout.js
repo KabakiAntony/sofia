@@ -92,8 +92,9 @@ function submitFormData(){
             return response.json();
             })
             .then((data) =>{
-                if(data === "0"){
-                    anon_message = "Please check your mpesa phone for a payment request from us."
+                
+                if(data === 201){
+                    anon_message = "Please check your mpesa phone for a payment request from Kopokopo on our behalf."
                     showAnonMessage("info", anon_message);
                     cart = {};
                     document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/";
