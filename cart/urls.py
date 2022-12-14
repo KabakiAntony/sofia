@@ -8,6 +8,6 @@ urlpatterns = [
     path('update/', views.update_item, name='update'),
     path('checkout/', views.checkout, name="checkout"),
     path('process_order/', views.process_order, name="process_order"),
-    path('callback/', views.mpesa_callback, name="callback"),
+    path('callback/', views.kopokopo_callback, name="callback"),
     path('payment-status/', views.payment_status, name="payment_status"),
 ]
