@@ -6,7 +6,8 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.template.loader import render_to_string
 from .forms import MyUserCreationForm, UserSetNewPasswordForm, UserForgotPasswordForm
-from .models import User,Customer
+from  django.conf import settings
+from .models import Customer
 from cart.utils import cart_data
 from journaling.emails import _send_email
 from journaling.tokens import account_activation_token, password_reset_token
@@ -73,7 +74,7 @@ def signin_user(request):
         password = request.POST.get('password')
 
         try:
-            user = User.objects.get(email=email)
+            user = settings.AUTH_USER_MODEL.objects.get(email=email)
 
             if not user.email_confirmed:
                 messages.add_message(request, messages.ERROR, 
@@ -104,9 +105,9 @@ def verify_email(request, uidb64, token):
     cartItems = data['cartItems']
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
+        user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
 
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+    except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
         messages.add_message(request, messages.WARNING, str(e))
         user = None
     
@@ -133,7 +134,7 @@ def send_reset_link(request):
         form = UserForgotPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            user_query_set = User.objects.filter(email=email)
+            user_query_set = settings.AUTH_USER_MODEL.objects.filter(email=email)
             current_site = get_current_site(request)
             protocol = request.scheme
 
@@ -181,8 +182,8 @@ def change_password(request, uidb64, token):
     if request.method == 'POST':
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+            user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
             messages.add_message(request, messages.WARNING, str(e))
             user = None
 
@@ -213,8 +214,8 @@ def change_password(request, uidb64, token):
     # this case caters for GET part of this view
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
+        user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
         messages.add_message(request, messages.WARNING, str(e))
         user = None
 
