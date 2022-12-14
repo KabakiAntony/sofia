@@ -14,7 +14,7 @@ def cookie_cart(request):
         'get_cart_total':0, 
         'get_cart_items':0,
         'get_shipping_amount':350,
-        'get_pickup_amount':100,
+        'get_pickup_amount':0,
         'get_shipping_n_cart_total':0,
         'get_pickup_n_cart_total':0,
         }
