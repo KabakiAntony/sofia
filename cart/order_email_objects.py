@@ -4,7 +4,7 @@ class EmailInfo:
         self.__email_subject = ""
         self.__customer_email = ""
         self.__transaction_id = ""
-        self.__checkout_req_id = ""
+        self.__checkout_req_url = ""
         self.__admin_email_object = ""
 
 
@@ -13,8 +13,8 @@ class EmailInfo:
         return self.__admin_email_object
 
     @property
-    def checkout_req_id(self):
-        return self.__checkout_req_id
+    def checkout_req_url(self):
+        return self.__checkout_req_url
 
     @property
     def email_object(self):
@@ -32,9 +32,9 @@ class EmailInfo:
     def transaction_id(self):
         return self.__transaction_id
 
-    @checkout_req_id.setter
-    def checkout_req_id(self, req_id):
-        self.__checkout_req_id = req_id
+    @checkout_req_url.setter
+    def checkout_req_url(self, req_url):
+        self.__checkout_req_url = req_url
 
     @email_object.setter
     def email_object(self, object):
