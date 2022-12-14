@@ -1234,7 +1234,7 @@ small{
     display:none;
   }
   .product-grid {
-    grid-template-columns: repeat(6, 1fr);
+    /* grid-template-columns: repeat(6, 1fr); */
     gap:1rem;
   }
   .mobile_hidden_details, .hidden-header{
