@@ -21,7 +21,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['journalingtherapy.co.ke']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -143,4 +143,4 @@ DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@journalingtherapy.co.ke'
 
 
 # trusted origin
-CSRF_TRUSTED_ORIGINS = ['https://journalingtherapy.co.ke/']
+CSRF_TRUSTED_ORIGINS = ['https://journalingtherapy.co.ke/',]
