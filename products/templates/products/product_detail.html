@@ -29,11 +29,19 @@
                         <h2 id="product-name" data-product_name="{{ product.name.capitalize }}">{{ product.name.capitalize }}</h2>
                         <p>{{ product.description.capitalize }}.</p>
                         <p>Only <strong>({{ product.stock }})</strong> remaining, hurry while stocks last.</p>
+                        <!-- Show if the product is available in more than one color -->
+                        {% if product.colorchoices_set.all %}
+                        <label for="colors">Select your preferred colour : </label>
+                        <select name="colors" id="colors">
+                            {% for color in product.colorchoices_set.all %}
+                                <option class="color-option" id="{{ color.colors }}" value="{{ color.colors }}">{{ color.colors }}</option>
+                            {% endfor%}
+                        </select>
+                        {% endif %}
                         <p class="price">Kes {{ product.price }}</p>
                         <div class="btn-center">
                             <button data-product={{ product.id }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
                         </div>
-                        
                 </div>
             </div>
             <div class="cart-summary">
