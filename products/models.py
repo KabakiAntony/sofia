@@ -53,3 +53,16 @@ class GoesWellWith(models.Model):
 
     class Meta:
         verbose_name_plural = "Products that this product goes well with"
+
+
+class  ColorChoices(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    ProductColors = models.TextChoices('ProductColors', 'RED BLUE GREEN ORANGE YELLOW WHITE SILVER GOLD BLACK')
+    colors = models.CharField(blank=True, choices=ProductColors.choices, max_length=15)
+
+    def __str__(self):
+        return f"{self.product.name} is also available in {self.colors}."
+
+    class Meta:
+        verbose_name_plural = "Colors available for this product"
+
