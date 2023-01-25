@@ -1,47 +1,49 @@
+import uuid
+import secrets
 from django.db import models
+from django.urls import reverse
+from django.utils.text import slugify
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    title = models.CharField(max_length=200, unique=True)
     description = models.TextField(max_length=255, blank=True)
 
     def __str__(self):
-        return self.name
+        return self.title
     
     class Meta:
         verbose_name_plural = "Categories"
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-    slug = models.SlugField()
-    description = models.TextField(max_length=500, blank=True)
-    price = models.DecimalField(max_digits=7, decimal_places=0)
-    main_image = models.ImageField(default='default.jpeg', blank=True)
+    title = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    description = models.TextField(max_length=1000, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-    stock = models.PositiveIntegerField(default=1)
-    available = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.name
+        return self.title
 
     def short_name(self):
-        return self.name[:15]
+        return self.title[:15]
 
     def snippet(self):
         return self.description[:20] + " ..."
 
+    def get_absolute_url(self):
+        return reverse("products:product_detail", kwargs={"slug": self.slug})
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    thumb = models.ImageField(default='default.jpeg', blank=True)
-
-    def __str__(self):
-        return self.product.name
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            random_url = secrets.token_hex(8)
+            joined_string = "-".join([self.title,random_url])
+            self.slug = slugify(joined_string)
+        super(Product, self).save(*args, **kwargs)
+        
 
     class Meta:
-        verbose_name_plural = "Other product images"
+        verbose_name_plural = "Products"
 
 
 class GoesWellWith(models.Model):
@@ -49,20 +51,66 @@ class GoesWellWith(models.Model):
     product_two = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="followers")
 
     def __str__(self):
-        return f"{self.product_one.name} goes well with -> {self.product_two.name}"
+        return f"{self.product_one.title} Goes well with -> {self.product_two.title}"
 
     class Meta:
-        verbose_name_plural = "Products that this product goes well with"
+        verbose_name_plural = "Products it goes well with"
 
 
-class  ColorChoices(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    ProductColors = models.TextChoices('ProductColors', 'RED BLUE GREEN ORANGE YELLOW WHITE SILVER GOLD BLACK')
-    colors = models.CharField(blank=True, choices=ProductColors.choices, max_length=15)
+class Color(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    code = models.CharField(max_length=10, unique=True)
 
     def __str__(self):
-        return f"{self.product.name} is also available in {self.colors}."
+        return self.name
 
     class Meta:
-        verbose_name_plural = "Colors available for this product"
+        verbose_name_plural = "Colors"
+
+
+class Size(models.Model):
+    title = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Sizes"
+
+
+class Product_Entry(models.Model):
+    sku = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(unique=True, max_length=200)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    size = models.ForeignKey(Size, on_delete=models.CASCADE, blank=True, null=True)
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, blank=True, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    available = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Product Entries"
+
+
+class Image(models.Model):
+    product_entry = models.ForeignKey(Product_Entry, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200,blank=True)
+    thumb = models.ImageField(default='default.jpeg', blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name_plural = "Images"
+
+
+
+    
+
+
 
