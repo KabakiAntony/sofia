@@ -39,7 +39,6 @@
 
   h2,h4{
     font-weight: bold;
-    padding:0.3rem;
   }
    
   a {
@@ -250,7 +249,6 @@ header > .container{
   font-weight: normal;
   color: var(--primary-color);
   font-size:12px;
-  padding:2px;
   overflow-wrap: normal;
 }
 .product h4{
@@ -302,9 +300,9 @@ header > .container{
   padding: 0.2rem;
 }
 .price{
-  margin: 0.5rem;
-  text-align: center;
+  padding-left:0;
   font-weight: bold;
+  font-size: 18px;
 }
 .btn-center{
   text-align: center;
@@ -372,6 +370,49 @@ header > .container{
 .grid-margin{
   margin-top:1rem;
 }
+
+/* product detail product options */
+ .variant-options{
+  display: table;
+  border-spacing:5px;
+ }
+
+ input[type="radio"]{
+  display: none;
+ }
+
+input[type="radio"]:checked + .color-label{
+  border: 1px  solid #000000;
+  border-radius: 50%;
+}
+
+input[type="radio"]:checked + .size-label{
+  background-color: black;
+  color: #ffffff;
+  border-radius: 50%;
+}
+
+.color-label{
+  display: table-cell;
+  vertical-align: middle;
+  height: 35px;
+  width: 35px;
+  transition: all .3s ease-out;
+  border: 1px solid #000000;
+}
+
+.size-label{
+  display: table-cell;
+  vertical-align: middle;
+  height: 35px;
+  width: 35px;
+  transition: all .3s ease-out;
+  color:#000000;
+  border: 1px solid #000000;
+  text-align: center;
+  font-weight: bold;
+}
+ 
 
 /* cart page */
 
@@ -485,6 +526,11 @@ header > .container{
   background-color: var(--color-dark);
   border: none;
   border-radius: 1.5rem;
+}
+.selected-color{
+  display: inline;
+  margin-left:50px;
+  padding:5px;
 }
 /* checkout page */
 .checkout-wrapper{
@@ -893,7 +939,6 @@ small{
   .product-information > button{
     width:55%;
   }
-
   /* cart page */
 
   .cart-items > .btn{
@@ -1087,15 +1132,11 @@ small{
     .product-information > button{
      width: 100%;
     }
-    .price{
-      padding:1rem;
-      font-weight: bold;
-    }
     .images-grid{
       grid-template-columns: repeat(4, 1fr);
     }
 
-    /* search page */
+   /* search page */
 
     .not-found svg{
       margin-top:1.6rem;
@@ -1234,7 +1275,6 @@ small{
     display:none;
   }
   .product-grid {
-    /* grid-template-columns: repeat(6, 1fr); */
     gap:1rem;
   }
   .mobile_hidden_details, .hidden-header{
