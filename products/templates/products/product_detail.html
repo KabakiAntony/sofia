@@ -63,7 +63,7 @@
                 item{{cart.get_cart_items|pluralize}} in the cart</p>
                 <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
                 <div class="action-buttons">
-                    <a href="{% url 'cart:cart' %}" class="btn">View cart</a>
+                    {#<a href="{% url 'cart:cart' %}" class="btn">View cart</a>#}
                     <a href="{% url 'products:list' %}" class="btn">Continue shopping</a>
                 </div>
                 

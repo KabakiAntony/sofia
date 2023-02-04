@@ -13,26 +13,27 @@
                     <div>Total</div>
                 </div>
                 {% for item in items %}
+                <p>{{ product.get_absolute_url }}</p>
                 <div class="item">
-                    <div><a href="{% url 'products:detail' slug=item.product.slug %}">
+                    <div><a href="{{ product.get_absolute_url }}">
                         <div class="cart-item-image">
-                            <img src="{{item.product.thumb.url}}">
+                                <img src="{{item.product.image_set.all.first.thumb.url}}">
                         </div>
                     </a></div>
                     <div class="item-details mobile_hidden_details">
                         <h1 id="product-name">{{ item.product.name.capitalize }}</h1>
-                        <p>{{ item.product.description.capitalize }}</p>
+                        <p>{{ item.product.snippet.capitalize }}</p>
                     </div>
                     <div>{{ item.product.price }}</div>
                     <div class="increase-decrease-items">
-                        <div data-product={{item.product.id}} data-action="add" data-product_name="{{ item.product.name.capitalize }}" class="increase-items update-cart">+</div>
+                        <div data-product={{item.product.id}} data-action="add" data-product_name="{{ item.product.title.capitalize }}" class="increase-items update-cart">+</div>
                         <div class="item-quantity">{{ item.quantity }}</div>
-                        <div data-product={{item.product.id}} data-action="remove" data-product_name="{{ item.product.name.capitalize }}" class="reduce-items update-cart">-</div>
+                        <div data-product={{item.product.id}} data-action="remove" data-product_name="{{ item.product.title.capitalize }}" class="reduce-items update-cart">-</div>
                     </div>
                     <div>{{ item.get_total }}</div>
                 </div>
                 <div  class="item-action-buttons">
-                    <button data-product={{item.product.id}} data-action="delete" data-product_name="{{ item.product.name.capitalize }}" class="remove-from-cart btn update-cart">
+                    <button data-product={{item.product.id}} data-action="delete" data-product_name="{{ item.product.title.capitalize }}" class="remove-from-cart btn update-cart">
                         <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105.16 122.88">
                             <path class="cls-1" d="M11.17,37.16H94.65a8.4,8.4,0,0,1,2,.16,5.93,5.93,0,0,1,2.88,1.56,5.43,
                             5.43,0,0,1,1.64,3.34,7.65,7.65,0,0,1-.06,1.44L94,117.31v0l0,.13,0,.28v0a7.06,7.06,0,0,1-.2.9v0l0,
@@ -46,6 +47,10 @@
                             4.46l-2,37a4.57,4.57,0,0,1-5,4.06,4.47,4.47,0,0,1-4.51-4.46l2-37ZM25,61.7a4.46,4.46,0,
                             0,1,4.5-4.46,4.58,4.58,0,0,1,5,4.06l2,37a4.47,4.47,0,0,1-4.51,4.46,4.57,4.57,0,0,1-5-4.06l-2-37Z"/></svg>
                         Remove</button>
+                        <!-- <p class="selected-color">Color : Red</p> -->
+                        {% if product.colorchoices_set.all %}
+                        <p class="selected-color">Color : Red</p>
+                        {% endif %}
                 </div><hr>
                 {% endfor %}
                 <div class="action-buttons">

@@ -6,16 +6,15 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.template.loader import render_to_string
 from .forms import MyUserCreationForm, UserSetNewPasswordForm, UserForgotPasswordForm
-from  django.conf import settings
-from .models import Customer
-from cart.utils import cart_data
+from .models import User
+# from cart.utils import cart_data
 from journaling.emails import _send_email
 from journaling.tokens import account_activation_token, password_reset_token
 
 
 def signup_user(request):
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    # data = cart_data(request)
+    # cartItems = data['cartItems']
 
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
@@ -24,18 +23,12 @@ def signup_user(request):
             user.is_active = False
             user.save()
 
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
             email = form.cleaned_data.get('email')
-            name = " ".join([first_name, last_name])
-
-            # create a customer on user creation
-            customer, created = Customer.objects.update_or_create(user=user,name=name,email=email)
-    
+                
             # send activation email instead of signing the user in.
             current_site = get_current_site(request)
             protocol = request.scheme
-            email_subject = f""" Welcome and verfiy your email."""
+            email_subject =  """ Welcome and verfiy your email."""
             email_content = render_to_string("accounts/verify_email_body.html",{
                 'user':user,
                 'current_site':current_site,
@@ -47,7 +40,9 @@ def signup_user(request):
             try:
                 _send_email(request, email, email_subject, email_content)
                 
-                return  render(request, 'accounts/check_email.html', {'cartItems':cartItems})
+                # return  render(request, 'accounts/check_email.html', {'cartItems':cartItems})
+                return  render(request, 'accounts/check_email.html')
+
                 
             except Exception as e:
                 messages.add_message(request, messages.ERROR, str(e))
@@ -58,13 +53,15 @@ def signup_user(request):
     else:
         form = MyUserCreationForm()
 
-    context = {'form': form, 'cartItems':cartItems}
-    return render(request, 'accounts/signup.html', context)
+    # context = {'form': form, 'cartItems':cartItems}
+        context = {'form': form}
+
+        return render(request, 'accounts/signup.html', context)
 
 
 def signin_user(request):
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    # data = cart_data(request)
+    # cartItems = data['cartItems']
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -74,7 +71,7 @@ def signin_user(request):
         password = request.POST.get('password')
 
         try:
-            user = settings.AUTH_USER_MODEL.objects.get(email=email)
+            user = User.objects.get(email=email)
 
             if not user.email_confirmed:
                 messages.add_message(request, messages.ERROR, 
@@ -95,19 +92,20 @@ def signin_user(request):
                 "User account could not be found, please signup to continue.")
             
         
-    context = {'cartItems':cartItems}
-    return render(request, 'accounts/signin.html', context)
+    # context = {'cartItems':cartItems}
+    # return render(request, 'accounts/signin.html', context)
+    return render(request, 'accounts/signin.html')
 
 
 def verify_email(request, uidb64, token):
     """ verify email """
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    # data = cart_data(request)
+    # cartItems = data['cartItems']
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
+        user = User.objects.get(pk=uid)
 
-    except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
         messages.add_message(request, messages.WARNING, str(e))
         user = None
     
@@ -119,22 +117,24 @@ def verify_email(request, uidb64, token):
         messages.add_message(request, messages.SUCCESS, "You have successfully verified your email, welcome.")
     else:
         error_message = 'Account activation link is invalid.'
-        context = {'cartItems':cartItems, "message": error_message}
+        # context = {'cartItems':cartItems, "message": error_message}
+        context = {"message": error_message}
+
         return render(request, 'accounts/verification_failed.html', context)
 
-    return redirect('home')
+    return redirect('customers:profile')
 
 
 def send_reset_link(request):
     """ view for sending password reset link """
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    # data = cart_data(request)
+    # cartItems = data['cartItems']
 
     if request.method == "POST":
         form = UserForgotPasswordForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
-            user_query_set = settings.AUTH_USER_MODEL.objects.filter(email=email)
+            user_query_set = User.objects.filter(email=email)
             current_site = get_current_site(request)
             protocol = request.scheme
 
@@ -145,12 +145,13 @@ def send_reset_link(request):
                 user.save()
 
                 email_subject = f""" Password reset link."""
-                email_content = render_to_string("accounts/password_reset_req_email_body.html",{
-                    'user':user,
-                    'current_site':current_site,
-                    'uid':urlsafe_base64_encode(force_bytes(user.pk)),
-                    'token':password_reset_token.make_token(user),
-                    "protocol":protocol
+                email_content = render_to_string(
+                    "accounts/password_reset_req_email_body.html",{
+                    'user': user,
+                    'current_site': current_site,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': password_reset_token.make_token(user),
+                    "protocol": protocol
                 })
                 
                 try:
@@ -159,16 +160,22 @@ def send_reset_link(request):
                     # if for some reason the email was not sent
                     print(str(e))
 
+            # redirect the user at this point it is always good to redirect a user to new route
+            # after a successful post request this clears the post session and hence you will not
+            # worry about resubmitting the data
+            # and move the below message to that route 
             message = "If this email is know to us, you will receive reset instructions shortly."
             messages.add_message(request, messages.SUCCESS, 
                 f'{email} has been submitted successfully. {message}')
 
         else:
             messages.add_message(request, messages.WARNING, "Email was not submitted")
-            return render(request, 'accounts/password_reset_email_form.html', {'form': form, 'cartItems':cartItems})
+            # return render(request, 'accounts/password_reset_email_form.html', {'form': form, 'cartItems':cartItems})
+            return render(request, 'accounts/password_reset_email_form.html', {'form': form})
+
     
     context = {
-            'cartItems':cartItems,
+            # 'cartItems':cartItems,
             'form': UserForgotPasswordForm
         }
     return render(request, 'accounts/password_reset_email_form.html', context)
@@ -176,14 +183,14 @@ def send_reset_link(request):
 
 def change_password(request, uidb64, token):
     """ view for reseting password """
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    # data = cart_data(request)
+    # cartItems = data['cartItems']
 
     if request.method == 'POST':
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
-            user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
             messages.add_message(request, messages.WARNING, str(e))
             user = None
 
@@ -196,14 +203,15 @@ def change_password(request, uidb64, token):
                 user.is_active = True
                 user.reset_password = False
                 user.save()
+                # test to see if the below message is rendered on the signin page after 
                 messages.add_message(request, messages.SUCCESS, "Password reset successfully.")
                 return redirect('signin')
             else:
                 context = {
                     'form': form,
-                    'uid':uidb64,
-                    'token':token,
-                    'cartItems':cartItems,
+                    'uid': uidb64,
+                    'token': token,
+                    # 'cartItems':cartItems,
                 }
                 messages.add_message(request, messages.WARNING, "Password could not be reset")
                 return render(request, 'accounts/new_password_form.html', context)
@@ -214,8 +222,8 @@ def change_password(request, uidb64, token):
     # this case caters for GET part of this view
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
-        user = settings.AUTH_USER_MODEL.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, settings.AUTH_USER_MODEL.DoesNotExist) as e:
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
         messages.add_message(request, messages.WARNING, str(e))
         user = None
 
@@ -224,7 +232,7 @@ def change_password(request, uidb64, token):
                     'form':UserSetNewPasswordForm(user),
                     'uid':uidb64,
                     'token':token,
-                    'cartItems':cartItems,
+                    # 'cartItems':cartItems,
                 }
         return render(request, 'accounts/new_password_form.html', context)
     else:

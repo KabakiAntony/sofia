@@ -1,11 +1,42 @@
 {% extends 'main.html' %}
 
+{% load static %}
+
 {% block content %}
 
 {% include 'mobile_search.html' %}
-
     <div class="container">
-        
+        <h4 class="header account-overview-header">Account overview</h4>
+        <div class="profile-dashboard">
+            <div class="account-links">
+                <h4 class="header">My Account</h4>
+                <a href="">My orders</a>
+                <a id="update_address">Update address</a>
+            </div>
+            <div class="account-overview"  id="append_here">
+                <p id="profile-cta" class="">Please hold as we get your information ...</p>
+            </div>
+        </div>
+        <div class="best-sellers">
+            <h4>Some of our top sellers</h4>
+            <div class="product-grid">
+                {% for product in products %}
+                    <!-- show only if a product has entries -->
+                    {% if product.product_entry_set.all %}
+                        {% with first_entry=product.product_entry_set.all.first %}
+                            <a href="{{ product.get_absolute_url }}">
+                            <div class="product">
+                                <img src="{{  first_entry.image_set.all.first.thumb.url }}">
+                                <h2>{{ product.title.capitalize }}</h2>
+                                <h4>Kes {{ first_entry.price }}</h4>
+                                <button class="btn mobile-product-view">view</button>
+                            </div></a>
+                        {% endwith %}
+                    {% endif %}
+                 {% endfor %}
+             </div>
+        </div>
+        </div>
     </div>
-
-{% endcontent %}
+    <script src="{% static 'js/page/profile.js' %}"></script>
+{% endblock %}

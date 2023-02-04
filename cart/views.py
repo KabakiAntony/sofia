@@ -8,7 +8,8 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.views.decorators.csrf import csrf_exempt
-from .models import Cart, CartItems, ShippingInformation, OrderStatus
+from .models import Cart, CartItems, OrderStatus
+from customers.models import Address
 from products.models import Product
 from .utils import cart_data, guest_cart
 from .order_email_objects import EmailInfo

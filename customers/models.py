@@ -4,7 +4,8 @@ from django.conf import settings
 
 class Customer(models.Model):
     """ this holds customer information """
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     mobile_no = models.CharField(max_length=13, blank=True)
 
     def __str__(self):
@@ -17,6 +18,10 @@ class Customer(models.Model):
     @property
     def get_last_name(self):
         return self.user.last_name
+
+    @property
+    def get_full_name(self):
+        return " ".join([self.get_first_name, self.get_last_name])
 
     class Meta:
         verbose_name_plural = "Customers"
@@ -36,10 +41,8 @@ class Address(models.Model):
     apartment_suite_building = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.customer
-    
+        return self.customer.user.email
 
     class Meta:
         verbose_name_plural = "Shipping Address"
-
 

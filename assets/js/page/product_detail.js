@@ -21,7 +21,6 @@ let selected_color = document.getElementById('selected-id');
 let  radio_buttons = document.getElementsByName('color-options');
 let append_div = document.getElementById('append_product')
 
-
 function change_product(sku){
     let url = '/products/select/'
 
@@ -47,5 +46,4 @@ function change_product(sku){
 document.body.addEventListener('change', function(e){
   let sku = e.target.value;
   change_product(sku);
-
 })

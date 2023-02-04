@@ -1,6 +1,6 @@
 from django.db import models
-from accounts.models import Customer
-from products.models import Product
+from customers.models import Customer
+from products.models import Product_Entry
 from django.http import HttpResponse
 
 
@@ -48,12 +48,12 @@ class Cart(models.Model):
 class CartItems(models.Model):
     """ these are the items on the cart """
     cart =  models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
-    product =  models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product =  models.ForeignKey(Product_Entry, on_delete=models.SET_NULL, null=True)
     quantity = models.IntegerField(default=0)
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.product.name
+        return self.product.title
 
     @property
     def get_total(self):
@@ -62,23 +62,6 @@ class CartItems(models.Model):
     
     class Meta:
         verbose_name_plural ="Cart Items"
-
-
-class ShippingInformation(models.Model):
-    """ this will hold a customer shipping information"""
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
-    cart =  models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
-    city_town_area = models.CharField(max_length=200, null=True)
-    street_lane_other = models.CharField(max_length=200, null=True)
-    apartment_suite_building = models.CharField(max_length=200, null=True)
-    mobile_no = models.CharField(max_length=13, null=False)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.customer.email
-    
-    class Meta:
-        verbose_name_plural = "Shipping Information"
 
 
 class OrderStatus(models.Model):
