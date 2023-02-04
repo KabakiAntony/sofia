@@ -1,0 +1,22 @@
+<div class="personal-information">
+    <h6 class="header">Personal Information</h6>
+    <ul>
+        <label for="name">Name: </label>
+        <li id="name">{{ customer.get_full_name|title }}</li>
+        <label for="email">Email</label>
+        <li id="email">{{ customer.user }}</li>
+        <label for="mobile">Mobile no</label>
+        <li id="mobile">{{ customer.mobile_no }}</li>
+    </ul>
+</div>
+<div class="address">
+    <h6 class="header">Address</h6>
+    <ul>
+        <label for="region">Region</label>
+        <li id="region">{{ address.region|title }}</li>
+        <label for="Street">Street / Lane / Other</label>
+        <li id="street">{{ address.street_lane_other|title }}</li>
+        <label for="apartment">Apartment / Building / Suite</label>
+        <li id="apartment">{{ address.apartment_suite_building|title }}</li>
+    </ul>
+</div>

@@ -7,80 +7,104 @@
 {% include 'mobile_search.html' %}
     <div class="container">
         <div class="product-details">
-            <div class="product-wrapper">
-                <div class="product-image slideshow-container">
-                    <!-- Always show the main image -->
-                        <div class="mySlides fade">
-                            <img src="{{product.main_image.url}}">
-                        </div>
-                    <!-- Show if there is more than one image -->
-                    {% if product.productimage_set.all %}
-                        {% for productImage in product.productimage_set.all %}
-                            <div class="mySlides fade">
-                                <img src="{{productImage.thumb.url}}">
+            <!-- product details -->
+            {% if entries %}
+            {% with first_entry=entries.first %}
+                <div class="product-wrapper" id="append_product">
+                    <div class="product-image slideshow-container">
+                            {% for image in first_entry.image_set.all %}
+                                <div class="mySlides fade">
+                                    <img src="{{ image.thumb.url }}">
+                                </div>
+                            {% endfor %}
+                            {% if first_entry.image_set.all|length > 1 %}
+                                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                            {% endif %}
+                    </div>
+                    <div class="product-information">
+                            <h2 id="product-name" data-product_name="{{ product.title.capitalize }}">{{ product.title.capitalize }}</h2>
+                            <p>{{ product.description.capitalize }}.</p><hr><br>
+                            <h4>{{ first_entry.title.capitalize }}</h4><br>
+                            <span class="price">Kes {{ first_entry.price }}</span><br><br>
+                            <!-- show if the product has colors to choose from -->
+                            <div class="variant-options">
+                                {% for entry in entries %}
+                                    {% if entry.color %}
+                                        <input type="radio"  name="color-options" id="{{ entry.color.name}}" value="{{entry.sku}}"
+                                        {% if first_entry.color.name == entry.color.name %} checked {% endif %}>
+                                        <label  class="color-label" for="{{entry.color.name}}" style="background-color: {{ entry.color.code}};"></label>
+                                    {% endif %}
+                                    {% if entry.size %}
+                                        <input type="radio"  name="color-options" id="{{entry.size.title}}" value="{{entry.sku}}">
+                                        <label  class="size-label" for="{{entry.size.title}}">{{entry.size.title}}</label>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                        <!-- Next and previous buttons -->
-                        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-                        <a class="next" onclick="plusSlides(1)">&#10095;</a>
-                    {% endif %}
-                </div>
-                <div class="product-information">
-                        <h2 id="product-name" data-product_name="{{ product.name.capitalize }}">{{ product.name.capitalize }}</h2>
-                        <p>{{ product.description.capitalize }}.</p>
-                        <p>Only <strong>({{ product.stock }})</strong> remaining, hurry while stocks last.</p>
-                        <p class="price">Kes {{ product.price }}</p>
-                        <div class="btn-center">
-                            <button data-product={{ product.id }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
+                            <br>
+                            {% if first_entry.quantity <= 10 and first_entry.quantity > 1  and first_entry.available %}
+                                <p>Only <strong>{{ first_entry.quantity }}</strong> {{ first_entry.title }} left in stock.</p>
+                            {% elif first_entry.quantity < 1 or not first_entry.available %}
+                                <p>Item is currently out of stock.</p>
+                            {% endif %}
+                            <br>
+                            <div class="btn-center">
+                                <button data-product={{ first_entry.sku }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
+                            </div>
                         </div>
-                        
                 </div>
-            </div>
+            {% endwith %}
+            
+            {% endif %}
+            <!-- cart summary -->
             <div class="cart-summary">
                 <h1>Cart summary</h1>
-                <p>You have <strong>{{ cart.get_cart_items }}</strong> items in the cart</p>
+                <p>You have <strong>{{ cart.get_cart_items }}</strong>
+                item{{cart.get_cart_items|pluralize}} in the cart</p>
                 <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
                 <div class="action-buttons">
-                    <a href="{% url 'cart:cart' %}" class="btn">View cart</a>
+                    {#<a href="{% url 'cart:cart' %}" class="btn">View cart</a>#}
                     <a href="{% url 'products:list' %}" class="btn">Continue shopping</a>
                 </div>
                 
             </div>
         </div>
-
+        <!-- show products that go well with this product if any -->
         {% if goes_well_with %}
         <div class="single-product-grid grid-margin">
-            <h4 style="text-align:center;">Products that go well with this product</h4>
+            <h4 style="text-align:center;">Other products that go well with this product</h4>
             <div class="product-grid">
                 {% for goes_well_product in goes_well_with %}
-                    {% if goes_well_product.product_two.available %}
-                    <a href="{% url 'products:detail' slug=goes_well_product.product_two.slug %}">
-                    <div class="product">
-                        <img class="product_image" src="{{goes_well_product.product_two.main_image.url}}">
-                        <h2>{{ goes_well_product.product_two.name.capitalize }}</h2>
-                        <h4>Kes {{ goes_well_product.product_two.price }}</h4>
-                        <button class="btn mobile-product-view">view</button>
-                    </div></a>
-                    {% endif %}
-                 {% endfor %}
+                    {% with entry=goes_well_product.product_two.product_entry_set.all.first %}
+                                <a href="{{ goes_well_product.product_two.get_absolute_url }}">
+                                <div class="product">
+                                    <img class="product_image" src="{{ entry.image_set.all.first.thumb.url }}">
+                                    <h2>{{ goes_well_product.product_two.title.capitalize }}</h2>
+                                    <h4>Kes {{ entry.price }}</h4>
+                                    <button class="btn mobile-product-view">view</button>
+                                </div></a>
+                    {% endwith %}
+                {% endfor %}
              </div>
         </div>
-
+        <!-- show similar products if there are none that go well with the product  -->
         {% elif similar_products %}
         <div class="single-product-grid grid-margin">
-            <h4 style="text-align:center;">Similar to this product</h4>
+            <h4 style="text-align:center;">Similar products</h4>
             <div class="product-grid">
                 {% for similar_product in similar_products %}
-                    {% if similar_product.available %}
-                    <a href="{% url 'products:detail' slug=similar_product.slug %}">
-                    <div class="product">
-                        <img class="product_image" src="{{similar_product.main_image.url}}">
-                        <h2>{{ similar_product.name.capitalize }}</h2>
-                        <h4>Kes {{ similar_product.price }}</h4>
-                        <button class="btn mobile-product-view">view</button>
-                    </div></a>
-                    {% endif %}
-                 {% endfor %}
+                    {% with product_entry=similar_product.product_entry_set.all %}
+                        {% for similar_entry in product_entry %}
+                        <a href="{{ similar_product.get_absolute_url }}">
+                            <div class="product">
+                                <img class="product_image" src="{{similar_entry.image_set.all.first.thumb.url}}">
+                                <h2>{{ similar_entry.title.capitalize }}</h2>
+                                <h4>Kes {{ similar_entry.price }}</h4>
+                                <button class="btn mobile-product-view">view</button>
+                            </div></a>
+                            {% endfor %}
+                    {% endwith %}
+                {% endfor %}
              </div>
         </div>
         {% endif %}

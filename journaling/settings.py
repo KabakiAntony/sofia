@@ -36,8 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
-    'cart.apps.CartConfig',
+    # 'cart.apps.CartConfig',
+    'customers.apps.CustomersConfig',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,6 +98,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.User'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 

@@ -9,9 +9,9 @@
             <h4>Our Categories</h4>
             <div class="category-grid">
                 {% for category in categories %}
-                <a href="{% url 'products:search'  %}?q={{ category.name }}">
+                <a href="{% url 'products:search'  %}?q={{ category.title }}">
                     <div class="category">
-                        <h2>{{ category.name }}</h2>
+                        <h2>{{ category.title }}</h2>
                     </div></a>
                 {% endfor %}
             </div>
@@ -19,15 +19,18 @@
         <div class="single-product-grid">
             <h4>Our Products</h4>
             <div class="product-grid">
-                {% for product in products %} 
-                    {% if product.available %}
-                    <a href="{% url 'products:detail' slug=product.slug %}">
-                    <div class="product">
-                            <img class="product_image" src="{{product.main_image.url}}" >
-                        <h2>{{ product.name.capitalize }}</h2>
-                        <h4>Kes {{ product.price }}</h4>
-                        <button class="btn mobile-product-view">view</button>
-                    </div></a>
+                {% for product in products %}
+                    <!-- show only if a product has entries -->
+                    {% if product.product_entry_set.all %}
+                        {% with first_entry=product.product_entry_set.all.first %}
+                            <a href="{{ product.get_absolute_url }}">
+                            <div class="product">
+                                <img src="{{  first_entry.image_set.all.first.thumb.url }}">
+                                <h2>{{ product.title.capitalize }}</h2>
+                                <h4>Kes {{ first_entry.price }}</h4>
+                                <button class="btn mobile-product-view">view</button>
+                            </div></a>
+                        {% endwith %}
                     {% endif %}
                  {% endfor %}
              </div>

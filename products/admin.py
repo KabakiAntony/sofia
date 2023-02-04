@@ -1,6 +1,10 @@
 from django.contrib import admin
 from journaling.admin import journaling_admin_site
-from .models import Product, Category, ProductImage, GoesWellWith
+from .models import Product, Category, Image, GoesWellWith, Product_Entry, Color, Size
+
+
+class ProductEntryInline(admin.TabularInline):
+    model =  Product_Entry
 
 
 class GoesWellWithInline(admin.TabularInline):
@@ -8,30 +12,45 @@ class GoesWellWithInline(admin.TabularInline):
     fk_name = "product_one"
 
 
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
+class ImageInline(admin.TabularInline):
+    model = Image
 
 
 class ProductAdmin(admin.ModelAdmin):
-    # define how the custom form is going to be rendered
-    list_display = ['id','name','description','category','price', 'stock', 'available', 'date']
-    list_display_links = ['name']
+    list_display = ['title','category']
+    list_display_links = ['title']
     list_filter = ['category']
-    inlines = [ProductImageInline, GoesWellWithInline]
+    inlines = [GoesWellWithInline]
 
 
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ['id','product','thumb']
+class ImageAdmin(admin.ModelAdmin):
+    list_display = ['product_entry','thumb']
     readonly_fields = ['thumb']
-    list_display_links = ['product']
-    list_filter = ['product']
+    list_display_links = ['product_entry']
+    list_filter = ['product_entry']
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['id','name','description']
+    list_display = ['title','description']
+    list_display_links = ['title']
+
+
+class ColorAdmin(admin.ModelAdmin):
+    list_display = ['name','code']
     list_display_links = ['name']
 
+
+class ProductEntryAdmin(admin.ModelAdmin):
+    list_display = ['sku', 'title', 'product', 'size', 'color', 'quantity', 'price', 'available']
+    list_display_links = ['title']
+    list_filter = ['product', 'available']
+    inlines = [ImageInline]
+
+
 journaling_admin_site.register(Product,ProductAdmin)
-journaling_admin_site.register(ProductImage,ProductImageAdmin)
+journaling_admin_site.register(Product_Entry, ProductEntryAdmin)
+journaling_admin_site.register(Image,ImageAdmin)
 journaling_admin_site.register(Category, CategoryAdmin)
 journaling_admin_site.register(GoesWellWith)
+journaling_admin_site.register(Color, ColorAdmin)
+journaling_admin_site.register(Size)

@@ -26,7 +26,7 @@
         </div>
         <!-- mobile-cart -->
         <div class="mobile_cart">
-            <a href="{% url 'cart:cart' %}" class="cart" data-item="{{cartItems}}">
+            {#<a href="{% url 'cart:cart' %}" class="cart" data-item="{{cartItems}}">#}
             <svg  class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"
                 width="902.86px" height="902.86px" viewBox="0 0 902.86 902.86">
             <path d="M671.504,577.829l110.485-432.609H902.86v-68H729.174L703.128,179.2L0,178.697l74.753,399.129h596.751V577.829z
@@ -51,7 +51,7 @@
                             </svg></p> 
                     </button>
                     <div class="dropdown-content">
-                        <a href="#">
+                        <a href="{% url 'customers:profile' %}">
                             <svg class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                                 <path
                                   d="M27.465 32c-1.211 0-2.35-0.471-3.207-1.328l-9.392-9.391c-2.369
@@ -87,7 +87,7 @@
                 </div>
             {% endif %}
             <div class="desktop-cart">
-                <a href="{% url 'cart:cart' %}" class="cart" data-item="{{cartItems}}">
+                {#<a href="{% url 'cart:cart' %}" class="cart" data-item="{{cartItems}}">#}
                     <svg  class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg"
                         width="902.86px" height="902.86px" viewBox="0 0 902.86 902.86">
                     <path d="M671.504,577.829l110.485-432.609H902.86v-68H729.174L703.128,179.2L0,178.697l74.753,399.129h596.751V577.829z

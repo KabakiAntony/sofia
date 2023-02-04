@@ -1,0 +1,48 @@
+<div class="product-image slideshow-container">
+        {% for image in entry.image_set.all %}
+            <div class="mySlides fade">
+                <img src="{{image.thumb.url}}">
+            </div>
+        {% endfor %}
+    {% if entry.image_set.all|length > 1 %}
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+    {% endif %}
+</div>
+<div class="product-information">
+    <h2 id="product-name" data-product_name="{{ product.title.capitalize }}">{{ product.title.capitalize }}</h2>
+    <p>{{ product.description.capitalize }}.</p>
+    <hr>
+    <br>
+    <h4>{{ entry.title.capitalize }}</h4>
+    <span class="price">Kes {{ entry.price }}</span>
+    <br>
+    <!-- show if the product has colors to choose from -->
+    {% with entries=product.product_entry_set.all %}
+        <div class="variant-options">
+            {% for this_entry in entries %}
+                {% if this_entry.color %}
+                    <input type="radio"  name="color-options" id="{{this_entry.color.name}}" value="{{this_entry.sku}}"
+                    {% if this_entry.color.name == entry.color.name %} checked {% endif %}>
+                    <label  class="color-label" for="{{this_entry.color.name}}" style="background-color: {{ this_entry.color.code}};"></label>
+                {% endif %}
+                {% if entry.size %}
+                    <input type="radio"  name="color-options" id="{{this_entry.size.title}}" value="{{this_entry.sku}}">
+                    <label  class="size-label" for="{{this_entry.size.title}}">{{this_entry.size.title}}</label>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endwith %}
+    <br>
+    {% if entry.quantity <= 10 and entry.quantity > 1  and entry.available %}
+        <p>Only <strong>{{ entry.quantity }}</strong> {{ entry.title }} left in stock.</p>
+    {% elif entry.quantity < 1 or not entry.available %}
+        <p>Item is currently out of stock.</p>
+    {% endif %}
+    <br>
+    <div class="btn-center">
+        <button data-product={{ entry.sku }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
+    </div>
+</div>
+
+    
