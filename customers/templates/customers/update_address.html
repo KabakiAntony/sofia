@@ -1,16 +1,42 @@
-<div class="form_container address-form-container">
-    <h4 class="header">Add address information</h4>
-    <form
-      action="{% url 'customers:new_address' %}"
-      method="POST"
-      class="auth_form address_form"
-      id="address-form">
-      {% csrf_token %} {% for field in form %}
-      <label>{{ field.label }}</label>
-      <span class="error-span" id="{{ field.name }}"></span>
-      {{ field }} {% endfor %}
-      <button type="submit" class="btn" id="address-btn" id="save-address">
-        Save
-      </button>
-    </form>
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block content %}
+
+{% include 'components/mobile_search.html' %}
+
+<div class="container">
+  <h4 class="header account-overview-header">Account overview</h4>
+
+  <div class="profile-dashboard">
+    <!-- accounts links components -->
+    {% include 'components/accounts_links.html' %}
+    <div class="account-overview">
+      <div class="form_container address-form-container">
+        <h4 class="header">Update address information</h4>
+        <form
+          action="{% url 'customers:update_address' %}?next={{request.GET.next}}"
+          method="POST"
+          class="auth_form address_form"
+          id="address-form">
+          {% csrf_token %} 
+          {{ form }}
+          <button type="submit" class="btn" id="address-btn" id="save-address">
+            Save
+          </button>
+          {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+           {% endif %}
+        </form>
+    </div>
+    </div>
   </div>
+  <div class="best-sellers">
+    <h4>Some of our top sellers</h4>
+   <!-- product component -->
+   {% include 'components/products.html' %}
+  </div> 
+</div>
+<script src="{% static 'js/page/profile.js' %}"></script>
+{% endblock %}

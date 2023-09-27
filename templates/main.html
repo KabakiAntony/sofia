@@ -62,7 +62,7 @@
   </head>
 
   <body>
-    {% include 'navbar.html' %}
+    {% include 'components/navbar.html' %}
     
     {% if messages %}
     <ul class="messages">
@@ -77,6 +77,6 @@
     {% block content %}
     {% endblock %}
     <script src="{% static 'js/script.js' %}" type="module"></script>
-    {% include 'footer.html' %}
+    {% include 'components/footer.html' %}
   </body>
 </html>

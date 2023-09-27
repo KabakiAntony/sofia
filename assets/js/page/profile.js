@@ -1,23 +1,27 @@
-let append_to_div = document.getElementById('append_here');
-let profile_cta = document.getElementById('profile-cta');
+let selected_region = document.getElementById('id_region');
+let update_address = document.getElementById('update_address');
 
-function get_customer_info(){
-    let url = '/customers/information/'
-
-    fetch(url,{
-        method:'GET',
+function get_region_areas(id){
+    let url = '/customers/areas/'
+      fetch(url, {
+        method:'POST',
         credentials:'same-origin',
-        headers:{"Accept": 'application/json','X-CSRFToken':csrftoken}})
-        .then(response => response.json())
-        .then(data =>{
-            append_to_div.innerHTML =`${data.customer}`
-        })
+        headers:{
+          'Content-Type': 'application/json',
+          'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'region_id':id})
+      })
+      .then(response => response.text())
+      .then(html =>{
+        document.getElementById("id_area").innerHTML = html;
+      })
 }
 
-window.onload = function(){
-    get_customer_info();
-
-    if (profile_cta){
-        profile_cta.classList.add('submitting');
-    }
+if(selected_region){
+  selected_region.addEventListener('change',(e)=>{
+      let region_id = e.target.value
+      get_region_areas(region_id);
+  
+  })
 }

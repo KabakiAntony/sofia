@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
-    # 'cart.apps.CartConfig',
+    'cart.apps.CartConfig',
     'customers.apps.CustomersConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 
@@ -148,3 +149,4 @@ DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@journalingtherapy.co.ke'
 
 # trusted origin
 CSRF_TRUSTED_ORIGINS = ['https://journalingtherapy.co.ke/',]
+

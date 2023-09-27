@@ -4,38 +4,63 @@
 
 {% block content %}
 
-{% include 'mobile_search.html' %}
+{% include 'components/mobile_search.html' %}
+
     <div class="container">
         <h4 class="header account-overview-header">Account overview</h4>
         <div class="profile-dashboard">
-            <div class="account-links">
-                <h4 class="header">My Account</h4>
-                <a href="">My orders</a>
-                <a id="update_address">Update address</a>
-            </div>
-            <div class="account-overview"  id="append_here">
-                <p id="profile-cta" class="">Please hold as we get your information ...</p>
+            
+            <!-- accounts links components -->
+            {% include 'components/accounts_links.html' %}
+
+            <div class="account-overview">
+                {% if address %}
+                <div class="personal-information">
+                    <h6 class="header">Personal Information</h6>
+                    <ul>
+                        <label for="name">Name: </label>
+                        <li id="name">{{ customer|title }}</li>
+                        <label for="email">Email</label>
+                        <li id="email">{{ customer.get_email }}</li>
+                        <label for="mobile">Mobile no</label>
+                        <li id="mobile">{{ address.mobile_no }}</li>
+                    </ul>
+                </div>
+                <div class="address">
+                    <h6 class="header">Address</h6>
+                    <ul>
+                        <label for="region">Region</label>
+                        <li id="region">{{ address.region|title }}</li>
+                        <label for="region">Area</label>
+                        <li id="area">{{ address.area|title }}</li>
+                        <label for="Street">Street / Lane / Other</label>
+                        <li id="street">{{ address.street_lane_other|title }}</li>
+                        <label for="apartment">Apartment / Building / Suite</label>
+                        <li id="apartment">{{ address.apartment_suite_building|title }}</li>
+                    </ul>
+                </div>
+                {% else %}
+                    <div class="form_container address-form-container">
+                        <h4 class="header">Add address information</h4>
+                        <form
+                        action="{% url 'customers:address' %}"
+                        method="POST"
+                        class="auth_form address_form"
+                        id="address-form">
+                        {% csrf_token %} 
+                        {{ form }}
+                        <button type="submit" class="btn" id="address-btn" id="save-address">
+                            Save
+                        </button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="best-sellers">
             <h4>Some of our top sellers</h4>
-            <div class="product-grid">
-                {% for product in products %}
-                    <!-- show only if a product has entries -->
-                    {% if product.product_entry_set.all %}
-                        {% with first_entry=product.product_entry_set.all.first %}
-                            <a href="{{ product.get_absolute_url }}">
-                            <div class="product">
-                                <img src="{{  first_entry.image_set.all.first.thumb.url }}">
-                                <h2>{{ product.title.capitalize }}</h2>
-                                <h4>Kes {{ first_entry.price }}</h4>
-                                <button class="btn mobile-product-view">view</button>
-                            </div></a>
-                        {% endwith %}
-                    {% endif %}
-                 {% endfor %}
-             </div>
-        </div>
+           <!-- product component -->
+           {% include 'components/products.html' %}
         </div>
     </div>
     <script src="{% static 'js/page/profile.js' %}"></script>

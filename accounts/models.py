@@ -41,6 +41,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, max_length=255)
     email_confirmed = models.BooleanField(default=False)
     reset_password = models.BooleanField(default=False)
+    is_guest = models.BooleanField(default=False)
 
     objects = AccountsUserManager()
     

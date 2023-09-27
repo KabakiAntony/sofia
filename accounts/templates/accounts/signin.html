@@ -15,7 +15,9 @@
             <span class="error-span" id="password-error"></span>
             <input type="password" name="password" id="signin-password" required>
             <button type="submit" class="btn">Sign in</button>
-            <input type="hidden" name="next" value="{{ next }}">
+              {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+              {% endif %}
           </form>
           <div class="auth_action">
             <p>Don't have an account?

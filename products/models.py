@@ -82,6 +82,7 @@ class Product_Entry(models.Model):
     sku = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(unique=True, max_length=200)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    description = models.TextField(max_length=1000, blank=True)
     size = models.ForeignKey(Size, on_delete=models.CASCADE, blank=True, null=True)
     color = models.ForeignKey(Color, on_delete=models.CASCADE, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
@@ -92,6 +93,9 @@ class Product_Entry(models.Model):
 
     def __str__(self):
         return self.title
+
+    def snippet(self):
+        return self.description[:20] + " ..."
 
     class Meta:
         verbose_name_plural = "Product Entries"

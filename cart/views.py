@@ -1,46 +1,47 @@
 import json
 import time
-import os
 import uuid
+
 from django.contrib import messages
 from django.template.loader import render_to_string  
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.views.decorators.csrf import csrf_exempt
-from .models import Cart, CartItems, OrderStatus
-from customers.models import Address
-from products.models import Product
+
+from .models import Cart, CartItem
 from .utils import cart_data, guest_cart
-from .order_email_objects import EmailInfo
-from cart.utils import cart_data
+# from .order_email_objects import EmailInfo
+from .forms import CheckoutForm
+from customers.models import Address
+from products.models import Product_Entry
 from journaling.emails import _send_email
 from journaling.kopokopoHandler import KopoKopoHandler
 
 
 handler = KopoKopoHandler()
-email_maker = EmailInfo()
+# email_maker = EmailInfo()
 
 
 def cart(request):
     data = cart_data(request)
     items = data['items']
     cart = data['cart']
-    cartItems = data['cartItems']
+    cartItems = data['cartItems'] 
 
     context = { "items": items, "cart": cart, "cartItems":cartItems }
     return render(request, 'cart/cart.html', context)
 
 
-def update_item(request):
+def update_logged_in_user_cart_item(request):
     data = json.loads(request.body)
-    product_id = data['product_id']
+    entry_sku = data['entry_sku']
     action = data['action']
 
     customer = request.user.customer
-    product = Product.objects.get(id=product_id)
-    cart, created = Cart.objects.get_or_create(customer=customer, complete=False)
-    cartItem, created = CartItems.objects.get_or_create(cart=cart, product=product)     
+    product_entry = Product_Entry.objects.get(sku=entry_sku)
+    cart, created = Cart.objects.get_or_create(customer=customer)
+    cartItem, created = CartItem.objects.get_or_create(cart=cart, product_entry=product_entry)     
 
     if action == "add" or created:
         cartItem.quantity = (cartItem.quantity + 1)
@@ -64,13 +65,21 @@ def checkout(request):
     items = data['items']
     cart = data['cart']
     cartItems = data['cartItems']
+    form = CheckoutForm()
 
     if cartItems == 0:
         messages.add_message(request, messages.ERROR, 
         "You don't have any items on cart, please add some & try again.")
-        return redirect('cart:cart')
+        return redirect('home')
     else:
-        context = { "items": items, "cart": cart, "cartItems":cartItems }
+        context = {
+            
+                "items": items, 
+                "cart": cart, 
+                "cartItems":cartItems,
+                "form":form,
+            }
+       
         return render(request, "cart/checkout.html", context)
 
 
@@ -78,98 +87,106 @@ def process_order(request):
     data = cart_data(request)
     items = data['items']
     cart = data['cart']
-    cartItems = data['cartItems']
+    cartItems = data['cartItems'] 
     
     transaction_id = uuid.uuid4()
     data = json.loads(request.body)
 
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer=customer, complete=False)
+        cart, _ = Cart.objects.get_or_create(customer=customer)
 
     else:
         customer, cart = guest_cart(request, data)
+
+    print(cart, 'cart @ process order view')
+    print(items,'items  @ process order view')
+    print(cartItems, "cartItems @ process order view")
+    print(data['customer_info']['total'])
     
-    total = int(data['personal_info']['total'])
-    cart.transaction_id = transaction_id
-
-    email_maker.transaction_id = transaction_id # set trx id
-    shipping_or_pickup = data['shipping_info']['shipping_or_pickup']
-    shipping_or_pickup_info = {
-       "city_town_area" : data['shipping_info']['city_town_area'],
-        "street_lane_other" : data['shipping_info']['street_lane_other'],
-        "apartment_suite_building" : data['shipping_info']['apartment_suite_building'], 
-    }
+    return JsonResponse("Ok", safe=False)
     
-    if (total == cart.get_pickup_n_cart_total) or (total == cart.get_shipping_n_cart_total):
-        cart.complete = True
-    cart.save()
+    # total = int(data['customer_info']['total'])
+    # cart.transaction_id = transaction_id
 
-    shipping, created = ShippingInformation.objects.update_or_create(
-            customer=customer,
-            cart=cart,
-            city_town_area = data['shipping_info']['city_town_area'],
-            street_lane_other = data['shipping_info']['street_lane_other'],
-            apartment_suite_building = data['shipping_info']['apartment_suite_building'],
-            mobile_no=data['shipping_info']['mobile_no']
-        )
-
-    valid_phone_no = validify_phone_no(data['shipping_info']['mobile_no'])
-
-    # make stk push request to the number on file
-    first_name = data['personal_info']['first_name']
-    last_name = data['personal_info']['last_name']
-    email = data['personal_info']['email']
-
-    # send email to customer and admin with the order attached.
-    current_site = get_current_site(request)
-    protocol = request.scheme
-
-    callback_url = f"{protocol}://{current_site.domain}/cart/callback/"
+    # email_maker.transaction_id = transaction_id # set trx id
+    # shipping_or_pickup = data['address_info']['shipping_or_pickup']
+    # shipping_or_pickup_info = {
+    #    "city_town_area" : data['address_info']['city_town_area'],
+    #     "street_lane_other" : data['address_info']['street_lane_other'],
+    #     "apartment_suite_building" : data['address_info']['apartment_suite_building'],
+    #     "mobile_no": data['address_info']['mobile_no'],
+    # }
     
-    response = handler.make_stk_push(first_name, last_name, valid_phone_no, email, total, callback_url)
+    # if (total == cart.get_pickup_n_cart_total):
+    #     cart.complete = True
+    # cart.save()
 
-    email_maker.checkout_req_url = response.headers.get('location')
+
+    # valid_phone_no = validify_phone_no(data['address_info']['mobile_no'])
+
+    # shipping, _ = Address.objects.get_or_create(
+    #         region = data['address_info']['region'],
+    #         area = data['address_info']['area'],
+    #         street_lane_other = data['address_info']['street_lane_other'],
+    #         apartment_suite_building = data['address_info']['apartment_suite_building'],
+    #         mobile_no = valid_phone_no,
+    #         customer=customer,
+    #     )
+
+   
+
+    # # make stk push request to the number on file
+    # first_name = data['customer_info']['first_name']
+    # last_name = data['customer_info']['last_name']
+    # email = data['customer_info']['email']
+
+    # # send email to customer and admin with the order attached.
+    # current_site = get_current_site(request)
+    # protocol = request.scheme
+
+    # callback_url = f"{protocol}://{current_site.domain}/cart/callback/"
     
-    email_maker.email_subject = """ Thank you for shopping with us."""
-    email_maker.email_object = render_to_string("cart/order_email.html",
-        {
-        'customer':customer,
-        'cart':cart,
-        'cartItems':cartItems,
-        'items':items,
-        'current_site':current_site,
-        'protocol':protocol,
-        'shipping_or_pickup':shipping_or_pickup,
-        'shipping_or_pickup_info':shipping_or_pickup_info,
-        })   
+    # response = handler.make_stk_push(first_name, last_name, valid_phone_no, email, total, callback_url)
 
-    email_maker.customer_email = customer.email
+    # email_maker.checkout_req_url = response.headers.get('location')
     
-    email_maker.admin_email_object = render_to_string("cart/admin_order_email.html",
-        {
-        'customer':customer,
-        'shipping':shipping,
-        'cart':cart,
-        'cartItems':cartItems,
-        'items':items,
-        'current_site':current_site,
-        'protocol':protocol,
-        'shipping_or_pickup':shipping_or_pickup,
-        'shipping_or_pickup_info':shipping_or_pickup_info,
-        })   
+    # email_maker.email_subject = """ Thank you for shopping with us."""
+    # email_maker.email_object = render_to_string("cart/order_email.html",
+    #     {
+    #     'customer':customer,
+    #     'cart':cart,
+    #     'cartItems':cartItems,
+    #     'items':items,
+    #     'current_site':current_site,
+    #     'protocol':protocol,
+    #     'shipping_or_pickup':shipping_or_pickup,
+    #     'shipping_or_pickup_info':shipping_or_pickup_info,
+    #     })   
 
-    return JsonResponse(response.status_code, safe=False)
+    # email_maker.customer_email = customer.email
+    
+    # email_maker.admin_email_object = render_to_string("cart/admin_order_email.html",
+    #     {
+    #     'customer':customer,
+    #     'shipping':shipping,
+    #     'cart':cart,
+    #     'cartItems':cartItems,
+    #     'items':items,
+    #     'current_site':current_site,
+    #     'protocol':protocol,
+    #     'shipping_or_pickup':shipping_or_pickup,
+    #     'shipping_or_pickup_info':shipping_or_pickup_info,
+    #     })   
+
+    # return JsonResponse(response.status_code, safe=False)
     
  
 @csrf_exempt
 def kopokopo_callback(request):
     """ receive response from kopo kopo  """
     if request.method == 'POST':
-        data = json.loads(request.body)
-        messages.add_message(request, messages.INFO, 
-        "Please hold as we process your payment.")
-       
+        data = json.loads(request.body)     
         
     return JsonResponse("Ok", safe=False)
 
@@ -181,47 +198,47 @@ def validify_phone_no(phone_number):
     return phone_number
 
 
-def payment_status(request):
-    data = cart_data(request)
-    cartItems = data['cartItems']
-    payment_status_url = email_maker.checkout_req_url
+# def payment_status(request):
+#     data = cart_data(request)
+#     cartItems = data['cartItems']
+#     payment_status_url = email_maker.checkout_req_url
     
-    # wait for thirty seconds and check transaction
-    time.sleep(20)
-    response = handler.query_transaction_status(payment_status_url)
+#     # wait for thirty seconds and check transaction
+#     time.sleep(20)
+#     response = handler.query_transaction_status(payment_status_url)
 
-    # payment was processed successfully
-    if response['data']['attributes']['status'] == 'Success':
-        code = "0"
-        status = "Your payment has been processed successfully."
-        # only send order email on successful payment.
-        try:
-            customer_email = email_maker.customer_email
-            subject = email_maker.email_subject
-            content = email_maker.email_object
-            _send_email(request, customer_email, subject, content)
+#     # payment was processed successfully
+#     if response['data']['attributes']['status'] == 'Success':
+#         code = "0"
+#         status = "Your payment has been processed successfully."
+#         # only send order email on successful payment.
+#         try:
+#             customer_email = email_maker.customer_email
+#             subject = email_maker.email_subject
+#             content = email_maker.email_object
+#             _send_email(request, customer_email, subject, content)
 
-            # create order status object
-            OrderStatus.objects.create(
-            transaction_id = email_maker.transaction_id,
-            status=status,
-            result_code = code)
+#             # create order status object
+#             OrderStatus.objects.create(
+#             transaction_id = email_maker.transaction_id,
+#             status=status,
+#             result_code = code)
 
-            admin_content = email_maker.admin_email_object
-            admin_subject = "We have received and order."
-            _send_email(request, "kabaki.antony@gmail.com", admin_subject, admin_content)
+#             admin_content = email_maker.admin_email_object
+#             admin_subject = "We have received and order."
+#             _send_email(request, "kabaki.antony@gmail.com", admin_subject, admin_content)
 
-        except Exception as e:
-            # log this error
-            print(str(e))
+#         except Exception as e:
+#             # log this error
+#             print(str(e))
 
-    elif response['data']['attributes']['status'] == 'Failed':
-        code = "1"
-        status = "We were unable to receive your payment."
+#     elif response['data']['attributes']['status'] == 'Failed':
+#         code = "1"
+#         status = "We were unable to receive your payment."
 
 
-    context = {"cartItems":cartItems, "status":status, "code":code}
-    return render(request, "cart/order_status.html",context)
+#     context = {"cartItems":cartItems, "status":status, "code":code}
+#     return render(request, "cart/order_status.html",context)
 
 
 
