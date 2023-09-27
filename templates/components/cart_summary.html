@@ -1,0 +1,10 @@
+<div class="cart-summary">
+    <h1>Cart summary</h1>
+    <p>You have <strong>{{ cart.get_cart_items }}</strong>
+    item{{cart.get_cart_items|pluralize}} in the cart</p>
+    <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
+    <div class="action-buttons">
+        <a href="{% url 'cart:cart' %}" class="btn">View cart</a>
+        <a href="{% url 'products:list' %}" class="btn">Continue shopping</a>
+    </div>
+</div>

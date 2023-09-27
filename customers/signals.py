@@ -11,5 +11,5 @@ def create_customer(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def save_profile(sender, instance, **kwargs):
+def save_customer(sender, instance, **kwargs):
     instance.customer.save()

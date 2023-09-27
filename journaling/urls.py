@@ -9,8 +9,9 @@ urlpatterns = [
     path('admin/', journaling_admin_site.urls),
     path('accounts/', include('accounts.urls')), 
     path('products/', include('products.urls')),
-    # path('cart/', include('cart.urls')),
+    path('cart/', include('cart.urls')),
     path('customers/', include('customers.urls')),
+    path('orders/', include('orders.urls')),
     path('', home_page.home, name='home'),
 ]
 

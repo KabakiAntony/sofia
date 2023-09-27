@@ -8,7 +8,7 @@
       <h4 class="form_header">Sign up</h4>
       <form action="" method="POST" class="auth_form" id="signup-form">
         {% csrf_token %}
-        {% for field in form %}
+          {% for field in form %}
             <label>{{ field.label }}</label>
             <span class="error-span" id="{{ field.name }}"></span>
             {{ field }}

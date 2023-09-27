@@ -4,7 +4,8 @@
 
 {% block content %}
 
-{% include 'mobile_search.html' %}
+{% include 'components/mobile_search.html' %}
+
     <div class="container">
         <div class="product-details">
             <!-- product details -->
@@ -23,10 +24,15 @@
                             {% endif %}
                     </div>
                     <div class="product-information">
-                            <h2 id="product-name" data-product_name="{{ product.title.capitalize }}">{{ product.title.capitalize }}</h2>
-                            <p>{{ product.description.capitalize }}.</p><hr><br>
-                            <h4>{{ first_entry.title.capitalize }}</h4><br>
-                            <span class="price">Kes {{ first_entry.price }}</span><br><br>
+                            <h2>{{ product.title.capitalize }}</h2>
+                            {% if first_entry.description %}
+                                <p>{{ first_entry.description.capitalize }}</p>
+                            {% else %}
+                                <p>{{ product.description.capitalize }}</p>
+                            {% endif %}
+                            <hr><br>
+                            <h4 id="product-name" data-product_name="{{ first_entry.title.capitalize }}">{{ first_entry.title.capitalize }}</h4>
+                            <span class="price">Kes {{ first_entry.price }}</span>
                             <!-- show if the product has colors to choose from -->
                             <div class="variant-options">
                                 {% for entry in entries %}
@@ -41,15 +47,15 @@
                                     {% endif %}
                                 {% endfor %}
                             </div>
-                            <br>
+                            <br> 
                             {% if first_entry.quantity <= 10 and first_entry.quantity > 1  and first_entry.available %}
-                                <p>Only <strong>{{ first_entry.quantity }}</strong> {{ first_entry.title }} left in stock.</p>
+                                <p>Only <strong>{{ first_entry.quantity }}</strong> {{ first_entry.title.capitalize }} left in stock.</p>
                             {% elif first_entry.quantity < 1 or not first_entry.available %}
                                 <p>Item is currently out of stock.</p>
                             {% endif %}
                             <br>
                             <div class="btn-center">
-                                <button data-product={{ first_entry.sku }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
+                                <button data-product={{ first_entry.sku }}  data-action="add" class="btn update-cart btn-center" >Add to cart</button>
                             </div>
                         </div>
                 </div>
@@ -57,17 +63,7 @@
             
             {% endif %}
             <!-- cart summary -->
-            <div class="cart-summary">
-                <h1>Cart summary</h1>
-                <p>You have <strong>{{ cart.get_cart_items }}</strong>
-                item{{cart.get_cart_items|pluralize}} in the cart</p>
-                <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
-                <div class="action-buttons">
-                    {#<a href="{% url 'cart:cart' %}" class="btn">View cart</a>#}
-                    <a href="{% url 'products:list' %}" class="btn">Continue shopping</a>
-                </div>
-                
-            </div>
+            {% include 'components/cart_summary.html' %}
         </div>
         <!-- show products that go well with this product if any -->
         {% if goes_well_with %}

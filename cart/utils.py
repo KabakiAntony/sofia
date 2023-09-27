@@ -1,7 +1,10 @@
 import json
-from products.models import Product
-from accounts.models import Customer
-from .models import Cart, CartItems
+from products.models import Product_Entry
+from customers.models import Customer
+from .models import Cart, CartItem
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def cookie_cart(request):
     try:
@@ -13,10 +16,6 @@ def cookie_cart(request):
     order = {
         'get_cart_total':0, 
         'get_cart_items':0,
-        'get_shipping_amount':350,
-        'get_pickup_amount':0,
-        'get_shipping_n_cart_total':0,
-        'get_pickup_n_cart_total':0,
         }
     cartItems = order["get_cart_items"]
 
@@ -24,19 +23,20 @@ def cookie_cart(request):
         try:
             cartItems += cart[i]['quantity']
 
-            product = Product.objects.get(id=i)
-            total = (product.price * cart[i]['quantity'])
+            entry = Product_Entry.objects.get(sku=i)
+            total = (entry.price * cart[i]['quantity'])
 
             order['get_cart_total'] += total
             order['get_cart_items'] += cart[i]['quantity']
 
             item = {
-                    'product':{
-                        'id':product.id,
-                        'name':product.title,
-                        'price':product.price,
-                        'description':product.description,
-                        'slug':product.slug,
+                    'product_entry':{
+                        'sku':entry.sku,
+                        'title':entry.title,
+                        'price':entry.price,
+                        'description':entry.description,
+                        'product':entry.product,
+                        'image_set':entry.image_set.all(),
                     },
                     'quantity':cart[i]['quantity'],
                     'get_total':total,
@@ -45,16 +45,13 @@ def cookie_cart(request):
         except:
             pass
 
-    order['get_shipping_n_cart_total'] = order['get_cart_total'] + order['get_shipping_amount']
-    order['get_pickup_n_cart_total'] = order['get_cart_total'] + order['get_pickup_amount']
-
     return { "items": items, "cart": order, "cartItems":cartItems }
 
 def cart_data(request):
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer=customer, complete=False)
-        items = cart.cartitems_set.all()
+        cart, _ = Cart.objects.get_or_create(customer=customer)
+        items = cart.cartitem_set.all()
         cartItems = cart.get_cart_items
 
     else:
@@ -66,28 +63,32 @@ def cart_data(request):
     return { "items": items, "cart": cart, "cartItems":cartItems }
 
 def guest_cart(request, data):
-    email = data['personal_info']['email']
-    first_name = data['personal_info']['first_name']
-    last_name = data['personal_info']['last_name']
+    email = data['customer_info']['email']
+    firstname = data['customer_info']['first_name']
+    lastname = data['customer_info']['last_name']
+    is_guest = True
+
+    user, _ = User.objects.get_or_create(
+        email=email,
+        first_name=firstname,
+        last_name=lastname,
+        is_guest=is_guest
+        )
+    
+    customer = user.customer
 
     cookie_data = cookie_cart(request)
     items = cookie_data['items']
-    
-    name = " ".join([first_name, last_name])
-    customer, created = Customer.objects.get_or_create(email=email)
-    customer.name = name
-    customer.save()
 
     cart = Cart.objects.create(
         customer=customer,
-        complete=False,
     )
     
     for item in items:
-        product = Product.objects.get(id=item['product']['id'])
+        entry = Product_Entry.objects.get(sku=item['product_entry']['sku'])
 
-        CartItems.objects.create(
-            product=product,
+        CartItem.objects.create(
+            product_entry=entry,
             cart=cart,
             quantity=item['quantity']
         )

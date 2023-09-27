@@ -10,11 +10,15 @@
     {% endif %}
 </div>
 <div class="product-information">
-    <h2 id="product-name" data-product_name="{{ product.title.capitalize }}">{{ product.title.capitalize }}</h2>
-    <p>{{ product.description.capitalize }}.</p>
+    <h2>{{ product.title.capitalize }}</h2>
+    {% if entry.description %}
+        <p>{{ entry.description.capitalize }}</p>
+    {% else %}
+        <p>{{ product.description.capitalize }}</p>
+    {% endif %}
     <hr>
     <br>
-    <h4>{{ entry.title.capitalize }}</h4>
+    <h4 id="product-name" data-product_name="{{ entry.title.capitalize }}">{{ entry.title.capitalize }}</h4>
     <span class="price">Kes {{ entry.price }}</span>
     <br>
     <!-- show if the product has colors to choose from -->
@@ -41,8 +45,8 @@
     {% endif %}
     <br>
     <div class="btn-center">
-        <button data-product={{ entry.sku }}  data-action="add" class="btn update-cart btn-center">Add to cart</button>
-    </div>
+        <button data-product={{ entry.sku }}  data-action="add" class="btn update-cart btn-center" id="update-cart">Add to cart</button>
+    </div> 
 </div>
 
     
