@@ -4,7 +4,7 @@ from .models import Product, Category, Product_Entry
 from django.contrib.postgres.search import SearchVector, SearchQuery
 from cart.utils import cart_data
 from django.http import JsonResponse
-from django.template.loader import render_to_string 
+from django.template.loader import render_to_string
 
 
 def home(request):
@@ -15,9 +15,9 @@ def home(request):
     categories = Category.objects.all()
 
     context = {
-        "categories":categories,
-        "products":products,
-        'cartItems':cartItems,
+        "categories": categories,
+        "products": products,
+        'cartItems': cartItems,
     }
     return render(request, "products/index.html", context)
 
@@ -27,17 +27,18 @@ def product_details(request, slug):
     cart = data['cart']
     cartItems = data['cartItems']
     product = Product.objects.get(slug=slug)
-    similar_products = Product.objects.filter(category=product.category).exclude(slug__iexact=slug)[:6]
+    similar_products = Product.objects.filter(
+        category=product.category).exclude(slug__iexact=slug)[:6]
     goes_well_with = product.following.all()
     entries = product.product_entry_set.all()
 
     context = {
-        "product":product,
+        "product": product,
         "entries": entries,
-        "similar_products":similar_products,
-        'cartItems':cartItems,
-        "cart":cart,
-        "goes_well_with":goes_well_with,
+        "similar_products": similar_products,
+        'cartItems': cartItems,
+        "cart": cart,
+        "goes_well_with": goes_well_with,
     }
     return render(request, "products/product_detail.html", context)
 
@@ -47,13 +48,13 @@ def search(request):
     data = cart_data(request)
     cartItems = data['cartItems']
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-  
+
     products = Product.objects.annotate(
         search=SearchVector("title", "description", "category__title")).filter(search=SearchQuery(q))
 
     context = {
-        "products":products,
-        'cartItems':cartItems,
+        "products": products,
+        'cartItems': cartItems,
     }
     return render(request, "products/search.html", context)
 
@@ -68,9 +69,9 @@ def get_product_entry(request):
 
         context = {
             'entry': entry,
-            "product":product,
+            "product": product,
         }
-        data = {'rendered_product': render_to_string('products/entry_detail.html', context)}
-        
-    return JsonResponse(data)
+        data = {'rendered_product': render_to_string(
+            'products/entry_detail.html', context)}
 
+    return JsonResponse(data)
