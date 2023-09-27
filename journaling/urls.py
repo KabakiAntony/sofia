@@ -3,16 +3,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from .admin import journaling_admin_site
 from django.urls import path, include
-from products import views as home_page
 
 urlpatterns = [
     path('admin/', journaling_admin_site.urls),
-    path('accounts/', include('accounts.urls')), 
-    path('products/', include('products.urls')),
-    path('cart/', include('cart.urls')),
-    path('customers/', include('customers.urls')),
-    path('orders/', include('orders.urls')),
-    path('', home_page.home, name='home'),
+    path('', include('accounts.urls')),
+    path('', include('cart.urls')),
+    path('', include('products.urls')),
+    path('', include('customers.urls')),
+    path('', include('orders.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
