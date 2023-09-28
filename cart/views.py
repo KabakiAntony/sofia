@@ -3,7 +3,7 @@ import time
 import uuid
 
 from django.contrib import messages
-from django.template.loader import render_to_string  
+from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.sites.shortcuts import get_current_site
@@ -27,9 +27,9 @@ def cart(request):
     data = cart_data(request)
     items = data['items']
     cart = data['cart']
-    cartItems = data['cartItems'] 
+    cartItems = data['cartItems']
 
-    context = { "items": items, "cart": cart, "cartItems":cartItems }
+    context = {"items": items, "cart": cart, "cartItems": cartItems}
     return render(request, 'cart/cart.html', context)
 
 
@@ -41,21 +41,25 @@ def update_logged_in_user_cart_item(request):
     customer = request.user.customer
     product_entry = Product_Entry.objects.get(sku=entry_sku)
     cart, created = Cart.objects.get_or_create(customer=customer)
-    cartItem, created = CartItem.objects.get_or_create(cart=cart, product_entry=product_entry)     
+    cartItem, created = CartItem.objects.get_or_create(
+        cart=cart, product_entry=product_entry)
 
     if action == "add" or created:
         cartItem.quantity = (cartItem.quantity + 1)
-        messages.add_message(request, messages.SUCCESS, f"{cartItem} added to cart successfully." )
+        messages.add_message(request, messages.SUCCESS,
+                             f"{cartItem} added to cart successfully.")
 
     elif action == "remove":
         cartItem.quantity = (cartItem.quantity - 1)
-        messages.add_message(request, messages.ERROR, f"{cartItem} removed from cart.")
+        messages.add_message(request, messages.ERROR,
+                             f"{cartItem} removed from cart.")
 
     cartItem.save()
 
     if cartItem.quantity <= 0 or action == "delete":
         cartItem.delete()
-        messages.add_message(request, messages.INFO, f"{cartItem} removed from cart.")
+        messages.add_message(request, messages.INFO,
+                             f"{cartItem} removed from cart.")
 
     return JsonResponse("Ok", safe=False)
 
@@ -68,18 +72,18 @@ def checkout(request):
     form = CheckoutForm()
 
     if cartItems == 0:
-        messages.add_message(request, messages.ERROR, 
-        "You don't have any items on cart, please add some & try again.")
-        return redirect('home')
+        messages.add_message(request, messages.ERROR,
+                             "You don't have any items on cart, please add some & try again.")
+        return redirect('list')
     else:
         context = {
-            
-                "items": items, 
-                "cart": cart, 
-                "cartItems":cartItems,
-                "form":form,
-            }
-       
+
+            "items": items,
+            "cart": cart,
+            "cartItems": cartItems,
+            "form": form,
+        }
+
         return render(request, "cart/checkout.html", context)
 
 
@@ -87,8 +91,8 @@ def process_order(request):
     data = cart_data(request)
     items = data['items']
     cart = data['cart']
-    cartItems = data['cartItems'] 
-    
+    cartItems = data['cartItems']
+
     transaction_id = uuid.uuid4()
     data = json.loads(request.body)
 
@@ -100,12 +104,12 @@ def process_order(request):
         customer, cart = guest_cart(request, data)
 
     print(cart, 'cart @ process order view')
-    print(items,'items  @ process order view')
+    print(items, 'items  @ process order view')
     print(cartItems, "cartItems @ process order view")
     print(data['customer_info']['total'])
-    
+
     return JsonResponse("Ok", safe=False)
-    
+
     # total = int(data['customer_info']['total'])
     # cart.transaction_id = transaction_id
 
@@ -117,11 +121,10 @@ def process_order(request):
     #     "apartment_suite_building" : data['address_info']['apartment_suite_building'],
     #     "mobile_no": data['address_info']['mobile_no'],
     # }
-    
+
     # if (total == cart.get_pickup_n_cart_total):
     #     cart.complete = True
     # cart.save()
-
 
     # valid_phone_no = validify_phone_no(data['address_info']['mobile_no'])
 
@@ -134,8 +137,6 @@ def process_order(request):
     #         customer=customer,
     #     )
 
-   
-
     # # make stk push request to the number on file
     # first_name = data['customer_info']['first_name']
     # last_name = data['customer_info']['last_name']
@@ -146,11 +147,11 @@ def process_order(request):
     # protocol = request.scheme
 
     # callback_url = f"{protocol}://{current_site.domain}/cart/callback/"
-    
+
     # response = handler.make_stk_push(first_name, last_name, valid_phone_no, email, total, callback_url)
 
     # email_maker.checkout_req_url = response.headers.get('location')
-    
+
     # email_maker.email_subject = """ Thank you for shopping with us."""
     # email_maker.email_object = render_to_string("cart/order_email.html",
     #     {
@@ -162,10 +163,10 @@ def process_order(request):
     #     'protocol':protocol,
     #     'shipping_or_pickup':shipping_or_pickup,
     #     'shipping_or_pickup_info':shipping_or_pickup_info,
-    #     })   
+    #     })
 
     # email_maker.customer_email = customer.email
-    
+
     # email_maker.admin_email_object = render_to_string("cart/admin_order_email.html",
     #     {
     #     'customer':customer,
@@ -177,17 +178,17 @@ def process_order(request):
     #     'protocol':protocol,
     #     'shipping_or_pickup':shipping_or_pickup,
     #     'shipping_or_pickup_info':shipping_or_pickup_info,
-    #     })   
+    #     })
 
     # return JsonResponse(response.status_code, safe=False)
-    
- 
+
+
 @csrf_exempt
 def kopokopo_callback(request):
     """ receive response from kopo kopo  """
     if request.method == 'POST':
-        data = json.loads(request.body)     
-        
+        data = json.loads(request.body)
+
     return JsonResponse("Ok", safe=False)
 
 
@@ -202,7 +203,7 @@ def validify_phone_no(phone_number):
 #     data = cart_data(request)
 #     cartItems = data['cartItems']
 #     payment_status_url = email_maker.checkout_req_url
-    
+
 #     # wait for thirty seconds and check transaction
 #     time.sleep(20)
 #     response = handler.query_transaction_status(payment_status_url)
@@ -239,7 +240,3 @@ def validify_phone_no(phone_number):
 
 #     context = {"cartItems":cartItems, "status":status, "code":code}
 #     return render(request, "cart/order_status.html",context)
-
-
-
-
