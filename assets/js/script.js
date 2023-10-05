@@ -1,6 +1,6 @@
 import { showAnonMessage } from './page/utils.js'
 
-
+const dropdown = document.querySelector(".dropdown");
 const dropdownMenu = document.querySelector(".dropdown-content");
 const dropdownButton = document.querySelector(".dropdown-button");
 let messages = document.querySelector(".messages");
@@ -9,9 +9,19 @@ let anon_message = "";
 let append_product_div = document.getElementById('append_product');
 
 if (dropdownButton) {
-  dropdownButton.addEventListener("click", () => {
+  dropdownButton.addEventListener("click", (e) => {
+    e.stopPropagation();
     dropdownMenu.classList.toggle("show");
   });
+}
+
+if(dropdown){
+  document.addEventListener('click', (e)=>{
+    if (!dropdown.contains(e.target)){
+      dropdownMenu.classList.remove("show");
+    }
+
+  })
 }
 
 if (messages) {
