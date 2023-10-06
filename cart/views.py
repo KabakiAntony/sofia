@@ -15,8 +15,8 @@ from .utils import cart_data, guest_cart
 from .forms import CheckoutForm
 from customers.models import Address
 from products.models import Product_Entry
-from journaling.emails import _send_email
-from journaling.kopokopoHandler import KopoKopoHandler
+from sofia.emails import _send_email
+from sofia.kopokopoHandler import KopoKopoHandler
 
 
 handler = KopoKopoHandler()
@@ -74,7 +74,7 @@ def checkout(request):
     if cartItems == 0:
         messages.add_message(request, messages.ERROR,
                              "You don't have any items on cart, please add some & try again.")
-        return redirect('list')
+        return redirect('products:list')
     else:
         context = {
 

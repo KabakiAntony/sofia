@@ -2,9 +2,9 @@ from django.contrib import admin
 
 
 class SofiaAdmin(admin.AdminSite):
-    site_header = 'Journaling Administration'
-    site_title = 'Journaling Admin'
-    index_title = 'Journaling Admin'
+    site_header = 'Sofia Administration'
+    site_title = 'Sofia Admin'
+    index_title = 'Sofia Admin'
     site_url = None
 
 
