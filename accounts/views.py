@@ -1,15 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.template.loader import render_to_string
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 
 from .forms import MyUserCreationForm, UserSetNewPasswordForm, UserForgotPasswordForm
 from .models import User
 from cart.utils import cart_data
-from sofia.emails import _send_email
+from sofia.email_utils import send_verification_email, send_password_reset_email
 from sofia.tokens import account_activation_token, password_reset_token
 
 
@@ -26,20 +24,8 @@ def signup_user(request):
 
             email = form.cleaned_data.get('email')
 
-            # send activation email instead of signing the user in.
-            current_site = get_current_site(request)
-            protocol = request.scheme
-            email_subject = """ Welcome and verfiy your email."""
-            email_content = render_to_string("accounts/verify_email_body.html", {
-                'user': user,
-                'current_site': current_site,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-                "protocol": protocol
-            })
-
             try:
-                _send_email(request, email, email_subject, email_content)
+                send_verification_email(request, user, email)
 
                 return render(request, 'accounts/check_email.html', {'cartItems': cartItems})
 
@@ -133,8 +119,6 @@ def send_reset_link(request):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             user_query_set = User.objects.filter(email=email)
-            current_site = get_current_site(request)
-            protocol = request.scheme
 
             if len(user_query_set) > 0:
                 user = user_query_set[0]
@@ -142,29 +126,17 @@ def send_reset_link(request):
                 user.reset_password = True
                 user.save()
 
-                email_subject = f""" Password reset link."""
-                email_content = render_to_string(
-                    "accounts/password_reset_req_email_body.html", {
-                        'user': user,
-                        'current_site': current_site,
-                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                        'token': password_reset_token.make_token(user),
-                        "protocol": protocol
-                    })
-
                 try:
-                    _send_email(request, email, email_subject, email_content)
-                except Exception as e:
-                    # if for some reason the email was not sent
-                    print(str(e))
+                    send_password_reset_email(request, user, email)
 
-            # redirect the user at this point it is always good to redirect a user to new route
-            # after a successful post request this clears the post session and hence you will not
-            # worry about resubmitting the data
-            # and move the below message to that route
-            message = "If this email is know to us, you will receive reset instructions shortly."
+                except Exception as e:
+                    messages.add_message(request, messages.ERROR, str(e))
+
+            message = "If this email is know to us, you will receive reset instructions shortly, meanwhile continue checking out our products"
             messages.add_message(request, messages.SUCCESS,
                                  f'{email} has been submitted successfully. {message}')
+
+            return redirect('products:list')
 
         else:
             messages.add_message(request, messages.WARNING,
