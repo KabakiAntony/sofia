@@ -1,7 +1,7 @@
-# Journaling Therapy
+# Sofia
 
-## what is journaling therapy
-    Journaling Therapy is an online ecommerce site that deals with wellness items that is journals, affirmation cards and other kinds of gifts.
+## what is Sofia
+    Sofia is an online ecommerce site that deals with wellness items that is journals, affirmation cards and other kinds of gifts.
     The website is written in Django, users have the ability to create accounts to retain information and for repeat buys but one can also make purchases as a guest. The project is responsive making it viewable on different viewports. The project also has javascript for dom manipulations and for validations.
 
 
@@ -38,7 +38,7 @@
 
    The project uses PostgreSQL to persist data and if you wish to use the same you can [get it here](https://www.postgresql.org/download/), also when installing Postgresql install PgAdmin, it is really going to come in handy in managing your databases.
 
-   Once you have successfully installed create **journaling**. After creating the database create a **.env** file
+   Once you have successfully installed create **sofia**. After creating the database create a **.env** file
 
    ## .env file example
 
@@ -48,7 +48,7 @@
       DEBUG = on
       SECRET_KEY = "yoursecretkey"
       SENDGRID_KEY = "sendgrid api key to assit in sending emails"
-      DATABASE_URL = "postgres://postgres:{your postgres password}@localhost/journaling"
+      DATABASE_URL = "postgres://postgres:{your postgres password}@localhost/sofia"
    ```
 
    Once you are done with the **.env** file then you can run the below command to prepare the database for use, if for some reason the **makemigrations** command does not work or returns **no changes detected**
