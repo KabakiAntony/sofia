@@ -24,14 +24,14 @@
                             {% endif %}
                     </div>
                     <div class="product-information">
-                            <h2>{{ product.title.capitalize }}</h2>
+                            <h4 id="product-name" data-product_name="{{ first_entry.title.capitalize }}">{{ first_entry.title.capitalize }}</h4>
+                            <hr>
                             {% if first_entry.description %}
                                 <p>{{ first_entry.description.capitalize }}</p>
                             {% else %}
                                 <p>{{ product.description.capitalize }}</p>
                             {% endif %}
-                            <hr><br>
-                            <h4 id="product-name" data-product_name="{{ first_entry.title.capitalize }}">{{ first_entry.title.capitalize }}</h4>
+                            <br>
                             <span class="price">Kes {{ first_entry.price }}</span>
                             <!-- show if the product has colors to choose from -->
                             <div class="variant-options">
@@ -65,26 +65,8 @@
             <!-- cart summary -->
             {% include 'components/cart_summary.html' %}
         </div>
-        <!-- show products that go well with this product if any -->
-        {% if goes_well_with %}
-        <div class="single-product-grid grid-margin">
-            <h4 style="text-align:center;">Other products that go well with this product</h4>
-            <div class="product-grid">
-                {% for goes_well_product in goes_well_with %}
-                    {% with entry=goes_well_product.product_two.product_entry_set.all.first %}
-                                <a href="{{ goes_well_product.product_two.get_absolute_url }}">
-                                <div class="product">
-                                    <img class="product_image" src="{{ entry.image_set.all.first.thumb.url }}">
-                                    <h2>{{ goes_well_product.product_two.title.capitalize }}</h2>
-                                    <h4>Kes {{ entry.price }}</h4>
-                                    <button class="btn mobile-product-view">view</button>
-                                </div></a>
-                    {% endwith %}
-                {% endfor %}
-             </div>
-        </div>
-        <!-- show similar products if there are none that go well with the product  -->
-        {% elif similar_products %}
+        <!-- show similar products to the product  -->
+        {% if similar_products %}
         <div class="single-product-grid grid-margin">
             <h4 style="text-align:center;">Similar products</h4>
             <div class="product-grid">
@@ -93,10 +75,14 @@
                         {% for similar_entry in product_entry %}
                         <a href="{{ similar_product.get_absolute_url }}">
                             <div class="product">
-                                <img class="product_image" src="{{similar_entry.image_set.all.first.thumb.url}}">
-                                <h2>{{ similar_entry.title.capitalize }}</h2>
-                                <h4>Kes {{ similar_entry.price }}</h4>
-                                <button class="btn mobile-product-view">view</button>
+                                <div class="product-image">
+                                    <img class="product_image" src="{{similar_entry.image_set.all.first.thumb.url}}">
+                                </div>
+                                <div class="product-title-price">
+                                    <h2>{{ similar_entry.title.capitalize }}</h2>
+                                    <h4>Kes {{ similar_entry.price }}</h4>
+                                    <button class="btn mobile-product-view">view</button>
+                                </div>
                             </div></a>
                             {% endfor %}
                     {% endwith %}
