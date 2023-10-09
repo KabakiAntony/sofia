@@ -268,16 +268,26 @@ header {
   grid-template-columns: repeat(1, 1fr);
   gap: 0.5rem;
   margin-top: 0.4rem;
+  align-content: start;
 }
 
 .product {
-  justify-self: center;
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   text-align: center;
   overflow: hidden;
-  height: fit-content;
+  height: 100%;
+}
+.product-image{
+  max-width: 100%;
+  height: auto;
+}
+.product-title-price{
+  padding: 10px;
+  text-align: center;
 }
 
 .product h2 {
@@ -292,9 +302,7 @@ header {
   font-weight: bold;
 }
 
-.product>img {
-  height: 50%;
-  width: 100%;
+.product-image img {
   padding: 0.2rem;
   border-radius: var(--border-radius);
 }
@@ -1185,10 +1193,10 @@ footer svg {
   .search-form input {
     font-size: 14px;
   }
-
+/* 
   .product {
-    height: auto;
-  }
+    height: auto; 
+  } */
 
   .product h2 {
     font-size: 14px;
