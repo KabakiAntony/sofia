@@ -1,10 +1,11 @@
 import json
 from django.shortcuts import render
-from .models import Product, Category, Product_Entry
 from django.contrib.postgres.search import SearchVector, SearchQuery
-from cart.utils import cart_data
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+
+from .models import Product, Category, Product_Entry
+from cart.utils import cart_data
 
 
 def home(request):
@@ -29,7 +30,6 @@ def product_details(request, slug):
     product = Product.objects.get(slug=slug)
     similar_products = Product.objects.filter(
         category=product.category).exclude(slug__iexact=slug)[:6]
-    goes_well_with = product.following.all()
     entries = product.product_entry_set.all()
 
     context = {
@@ -38,7 +38,6 @@ def product_details(request, slug):
         "similar_products": similar_products,
         'cartItems': cartItems,
         "cart": cart,
-        "goes_well_with": goes_well_with,
     }
     return render(request, "products/product_detail.html", context)
 
@@ -49,13 +48,16 @@ def search(request):
     cartItems = data['cartItems']
     q = request.GET.get('q') if request.GET.get('q') != None else ''
 
-    products = Product.objects.annotate(
-        search=SearchVector("title", "description", "category__title")).filter(search=SearchQuery(q))
+    product_entries = Product_Entry.objects.annotate(
+        search=SearchVector("title", "product", "product__title",
+                            "product__category__title"))\
+        .filter(search=SearchQuery(q))
 
     context = {
-        "products": products,
+        "product_entries": product_entries,
         'cartItems': cartItems,
     }
+
     return render(request, "products/search.html", context)
 
 
