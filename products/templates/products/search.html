@@ -7,20 +7,21 @@
 <div class="container">
     <div class="single-product-grid">
         <h4>Search results</h4>
-        {% if products %}
+        {% if product_entries %}
         <div class="product-grid">
-            {% for product in products %} 
-                {% with entry=product.product_entry_set.all.first %}
-                    {% if entry %}
-                            <a href="{{ product.get_absolute_url }}">
-                            <div class="product">
-                                <img class="product_image" src="{{ entry.image_set.all.first.thumb.url }}">
-                                <h2>{{ product.title.capitalize }}</h2>
-                                <h4>Kes {{ entry.price }}</h4>
-                            </div>
-                            </a>
-                    {% endif %}
-                {% endwith %}
+            {% for product_entry in product_entries %}
+                <a href="{{ product_entry.product.get_absolute_url }}">
+                    <div class="product">
+                        <div class="product-image">
+                            <img src="{{  product_entry.image_set.all.first.thumb.url }}">
+                        </div>
+                        <div class="product-title-price">
+                            <h2>{{ product_entry.title.capitalize }}</h2>
+                            <h4>Kes {{ product_entry.price }}</h4>
+                            <button class="btn mobile-product-view">view</button>
+                        </div>
+                    </div>
+                </a>
             {% endfor %}
         </div>
         {% else %}
