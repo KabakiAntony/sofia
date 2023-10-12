@@ -8,8 +8,8 @@ urlpatterns = [
     path('admin/', sofia_admin_site.urls),
     path('', include('accounts.urls')),
     path('', include('cart.urls')),
-    path('', include('products.urls')),
     path('', include('customers.urls')),
+    path('', include('products.urls')),
     path('', include('orders.urls')),
 ]
 
