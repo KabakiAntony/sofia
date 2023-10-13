@@ -1,6 +1,7 @@
 from django.contrib import admin
 from sofia.admin import sofia_admin_site
 from .models import Product, Category, Image, Product_Entry, Color, Size
+from .forms import ImageAdminForm
 
 
 class ProductEntryInline(admin.TabularInline):
@@ -9,6 +10,7 @@ class ProductEntryInline(admin.TabularInline):
 
 class ImageInline(admin.TabularInline):
     model = Image
+    form = ImageAdminForm
 
 
 class ProductAdmin(admin.ModelAdmin):
