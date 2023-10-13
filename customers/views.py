@@ -2,9 +2,9 @@ import json
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django.template.loader import render_to_string 
+from django.template.loader import render_to_string
 
 from .models import Address, Region, Customer, Area, ShippingCosts
 from .forms import AddressForm
@@ -17,35 +17,35 @@ def user_profile(request):
     user = request.user
     data = cart_data(request)
     cartItems = data['cartItems']
-  
+
     try:
         products = Product.objects.all()[:8]
         address = Address.objects.get(customer=user.id)
 
-        context =  {
+        context = {
             "customer": user.customer,
-            "address":address,
-            "products":products,
-            "cartItems":cartItems,
+            "address": address,
+            "products": products,
+            "cartItems": cartItems,
         }
 
     except ObjectDoesNotExist:
         form = AddressForm()
         context = {
             "customer": user.customer,
-            "form":form,
-            "products":products,
-            "cartItems":cartItems,
+            "form": form,
+            "products": products,
+            "cartItems": cartItems,
         }
 
     return render(request, 'customers/profile.html', context)
 
-    
+
 @login_required(login_url='/accounts/signin/')
 def add_address(request):
     data = cart_data(request)
     cartItems = data['cartItems']
-    
+
     if request.method == "POST":
         user = request.user
         form = AddressForm(request.POST)
@@ -64,11 +64,11 @@ def add_address(request):
             apartment = form.cleaned_data.get('apartment_suite_building')
 
             address = Address(
-                area=area, 
+                area=area,
                 region=region,
-                street_lane_other=street, 
+                street_lane_other=street,
                 apartment_suite_building=apartment,
-                customer = customer,
+                customer=customer,
                 mobile_no=mobile_no,
                 is_default=True)
             address.save()
@@ -77,10 +77,12 @@ def add_address(request):
 
         else:
             for key in form.errors:
-                messages.add_message(request, messages.ERROR, str(form.errors[key]))
+                messages.add_message(
+                    request, messages.ERROR, str(form.errors[key]))
 
             products = Product.objects.all()[:8]
-            context = {'form': form, "products":products, "cartItems":cartItems,}
+            context = {'form': form, "products": products,
+                       "cartItems": cartItems, }
 
             return render(request, 'customers/profile.html', context)
 
@@ -93,8 +95,8 @@ def get_areas(request):
             selected_region = Region.objects.get(id=selected_region_id)
             areas = Area.objects.filter(region=selected_region)
 
-            context =  {
-                "areas":areas,
+            context = {
+                "areas": areas,
             }
 
         return render(request, 'components/areas_select.html', context)
@@ -105,10 +107,11 @@ def get_pickup_id(request):
     if request.method == "GET":
         region_name = "Nairobi"
         area_name = "CBD_PICKUP"
-        area = Area.objects.filter(region__region=region_name, area=area_name).first()
+        area = Area.objects.filter(
+            region__region=region_name, area=area_name).first()
         area_id = area.id
 
-    return JsonResponse({"area_id":area_id})
+    return JsonResponse({"area_id": area_id})
 
 
 @login_required(login_url='/accounts/signin/')
@@ -129,13 +132,13 @@ def update_address(request):
 
                 if 'next' in request.POST:
                     return redirect(request.POST.get('next'))
-                
+
                 return redirect('customers:profile')
 
-            
         form = AddressForm(instance=address)
-        context = {'form': form, "products":products, "cartItems":cartItems,}
-        return render(request, 'customers/update_address.html',context) 
+        context = {'form': form, "products": products,
+                   "cartItems": cartItems, }
+        return render(request, 'customers/update_address.html', context)
 
     except ObjectDoesNotExist:
         return redirect('customers:profile')
@@ -144,7 +147,7 @@ def update_address(request):
 def get_shipping_cost(request):
     data = cart_data(request)
     cart = data['cart']
-    
+
     if request.method == "POST":
         selected_area_id = json.load(request)['area_id']
         if selected_area_id:
@@ -152,17 +155,18 @@ def get_shipping_cost(request):
             if request.user.is_authenticated:
                 shipping_n_cart_total = shipping_cost.cost + cart.get_cart_total
             else:
-                shipping_n_cart_total = shipping_cost.cost + cart['get_cart_total']
+                shipping_n_cart_total = shipping_cost.cost + \
+                    cart['get_cart_total']
 
-
-            context =  {
-                "shipping_cost":shipping_cost.cost,
-                "shipping_n_cart_total":str(shipping_n_cart_total),
+            context = {
+                "shipping_cost": shipping_cost.cost,
+                "shipping_n_cart_total": str(shipping_n_cart_total),
             }
-        data = {'rendered_total': render_to_string('components/total_n_shipping.html', context)}
-        
+        data = {'rendered_total': render_to_string(
+            'components/total_n_shipping.html', context)}
+
     return JsonResponse(data)
-    
+
 
 @login_required(login_url='/accounts/signin/')
 def get_orders(request):
