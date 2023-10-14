@@ -1,21 +1,22 @@
 <div class="product-grid">
-    {% for product in products %}
-        <!-- show only if a product has entries -->
-        {% if product.product_entry_set.all %}
-            {% with first_entry=product.product_entry_set.all.first %}
-                <a href="{{ product.get_absolute_url }}">
-                <div class="product">
-                    <div class="product-image">
-                        <img src="{{  first_entry.image_set.all.first.thumb.url }}">
-                    </div>
-                    <div class="product-title-price">
-                        <h2>{{ product.title.capitalize }}</h2>
-                        <h4>Kes {{ first_entry.price }}</h4>
-                        <button class="btn mobile-product-view">view</button>
-                    </div>
-                </div></a>
-            {% endwith %}
-        {% endif %}
-     {% endfor %}
- </div>
+    {% for product in page_objects %}
+    <!-- show only if a product has entries -->
+    {% if product.product_entry_set.all %}
+    {% with first_entry=product.product_entry_set.all.first %}
+    <a href="{{ product.get_absolute_url }}">
+        <div class="product">
+            <div class="product-image">
+                <img src="{{  first_entry.image_set.all.first.thumb.url }}">
+            </div>
+            <div class="product-title-price">
+                <h2>{{ product.title.capitalize }}</h2>
+                <h4>Kes {{ first_entry.price }}</h4>
+                <button class="btn mobile-product-view">view</button>
+            </div>
+        </div>
+    </a>
+    {% endwith %}
+    {% endif %}
+    {% endfor %}
+    </div>
 </div>
