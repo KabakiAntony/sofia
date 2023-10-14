@@ -7,9 +7,9 @@
 <div class="container">
     <div class="single-product-grid">
         <h4>Search results</h4>
-        {% if product_entries %}
+        {% if page_objects %}
         <div class="product-grid">
-            {% for product_entry in product_entries %}
+            {% for product_entry in page_objects %}
                 <a href="{{ product_entry.product.get_absolute_url }}">
                     <div class="product">
                         <div class="product-image">
@@ -34,4 +34,5 @@
         {% endif %}
     </div>
 </div>
+    {% include 'components/pagination.html' %}
 {% endblock content %}
