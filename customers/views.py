@@ -19,13 +19,11 @@ def user_profile(request):
     cartItems = data['cartItems']
 
     try:
-        products = Product.objects.all()[:8]
         address = Address.objects.get(customer=user.id)
 
         context = {
             "customer": user.customer,
             "address": address,
-            "products": products,
             "cartItems": cartItems,
         }
 
@@ -34,7 +32,6 @@ def user_profile(request):
         context = {
             "customer": user.customer,
             "form": form,
-            "products": products,
             "cartItems": cartItems,
         }
 
@@ -80,9 +77,9 @@ def add_address(request):
                 messages.add_message(
                     request, messages.ERROR, str(form.errors[key]))
 
-            products = Product.objects.all()[:8]
-            context = {'form': form, "products": products,
-                       "cartItems": cartItems, }
+            context = {
+                'form': form,
+                "cartItems": cartItems, }
 
             return render(request, 'customers/profile.html', context)
 
@@ -122,7 +119,6 @@ def update_address(request):
 
     try:
         address = Address.objects.get(customer=user.id)
-        products = Product.objects.all()[:8]
 
         if request.method == "POST":
             form = AddressForm(request.POST, instance=address)
@@ -136,7 +132,7 @@ def update_address(request):
                 return redirect('customers:profile')
 
         form = AddressForm(instance=address)
-        context = {'form': form, "products": products,
+        context = {'form': form,
                    "cartItems": cartItems, }
         return render(request, 'customers/update_address.html', context)
 
