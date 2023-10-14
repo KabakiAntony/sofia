@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.contrib.postgres.search import SearchVector, SearchQuery
 from django.http import JsonResponse
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 
 from .models import Product, Category, Product_Entry
 from cart.utils import cart_data
@@ -12,13 +13,16 @@ def home(request):
     """ this will show products on the homepage """
     data = cart_data(request)
     cartItems = data['cartItems']
-    products = Product.objects.all()
+    products = Product.objects.all().order_by("title")
     categories = Category.objects.all()
+    paginator = Paginator(products, 24)
+    page_number = request.GET.get('page')
+    page_objects = paginator.get_page(page_number)
 
     context = {
         "categories": categories,
-        "products": products,
         'cartItems': cartItems,
+        "page_objects": page_objects
     }
     return render(request, "products/index.html", context)
 
@@ -51,10 +55,14 @@ def search(request):
     product_entries = Product_Entry.objects.annotate(
         search=SearchVector("title", "product", "product__title",
                             "product__category__title"))\
-        .filter(search=SearchQuery(q))
+        .filter(search=SearchQuery(q)).order_by('title')
+
+    paginator = Paginator(product_entries, 24)
+    page_number = request.GET.get('page')
+    page_objects = paginator.get_page(page_number)
 
     context = {
-        "product_entries": product_entries,
+        "page_objects": page_objects,
         'cartItems': cartItems,
     }
 
