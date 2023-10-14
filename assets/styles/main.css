@@ -317,6 +317,42 @@ header {
   padding: 0;
 }
 
+ .pagination {
+   text-align: center;
+   font-size: 12px;
+ }
+
+ .step-links {
+   display: inline-block;
+   padding: 10px;
+ }
+
+ .step-links a {
+   color: var(--color-primary);
+   text-decoration: none;
+   padding: 5px 10px;
+   border: var(--border);
+   margin: 0 5px;
+   border-radius: var(--border-radius);
+ }
+
+ .current {
+   display: inline-block;
+   padding: 5px 10px;
+   background-color:var(--color-primary);
+   color: var(--color-white);
+   border-radius: var(--border-radius);
+ }
+
+ .current a {
+   color: var(--color-white);
+ }
+
+ .step-links a:hover {
+   background-color: var(--color-primary);
+   color: var(--color-white);
+ }
+
 /* product  detail page */
 
 .product-details {
