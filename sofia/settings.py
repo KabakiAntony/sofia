@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'customers.apps.CustomersConfig',
     'orders.apps.OrdersConfig',
+    'emails.apps.EmailsConfig'
 ]
 
 
@@ -144,7 +145,6 @@ EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@sofia.co.ke')
-
 
 # trusted origin
 CSRF_TRUSTED_ORIGINS = ['https://sofia.co.ke/',]
