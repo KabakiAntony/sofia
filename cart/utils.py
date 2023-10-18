@@ -2,67 +2,87 @@ import json
 from products.models import Product_Entry
 from customers.models import Customer
 from .models import Cart, CartItem
+
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-def cookie_cart(request):
+
+def cookie_cart_instance(request):
+    """
+    Construct a guest cart based of items
+    they have selected.
+    """
     try:
-        cart = json.loads(request.COOKIES['cart'])
+        cookie_cart_entry = json.loads(request.COOKIES['cart'])
     except:
-        cart = {}
+        cookie_cart_entry = {}
 
     items = []
-    order = {
-        'get_cart_total':0, 
-        'get_cart_items':0,
-        }
-    cartItems = order["get_cart_items"]
+    cart_total = 0
+    total_items_on_cart = 0
 
-    for i in cart:
+    for i in cookie_cart_entry:
         try:
-            cartItems += cart[i]['quantity']
-
             entry = Product_Entry.objects.get(sku=i)
-            total = (entry.price * cart[i]['quantity'])
+            total = (entry.price * cookie_cart_entry[i]['quantity'])
 
-            order['get_cart_total'] += total
-            order['get_cart_items'] += cart[i]['quantity']
+            cart_total += total
+            total_items_on_cart += cookie_cart_entry[i]['quantity']
 
             item = {
-                    'product_entry':{
-                        'sku':entry.sku,
-                        'title':entry.title,
-                        'price':entry.price,
-                        'description':entry.description,
-                        'product':entry.product,
-                        'image_set':entry.image_set.all(),
-                    },
-                    'quantity':cart[i]['quantity'],
-                    'get_total':total,
-                }
+                'product_entry': {
+                    'sku': entry.sku,
+                    'title': entry.title,
+                    'price': entry.price,
+                    'description': entry.description,
+                    'product': entry.product,
+                    'image_set': entry.image_set.all(),
+                },
+                'quantity': cookie_cart_entry[i]['quantity'],
+                'get_total': total,
+            }
             items.append(item)
         except:
             pass
 
-    return { "items": items, "cart": order, "cartItems":cartItems }
+    return {
+        "items": items,
+        "cart_total": cart_total,
+        "total_items_on_cart": total_items_on_cart
+    }
 
-def cart_data(request):
+
+def cart_instance(request):
+    """
+    return a cart whether one is guest or authenticated
+    """
     if request.user.is_authenticated:
         customer = request.user.customer
         cart, _ = Cart.objects.get_or_create(customer=customer)
         items = cart.cartitem_set.all()
-        cartItems = cart.get_cart_items
+        cart_total = cart.cart_total
+        total_items_on_cart = cart.total_items_on_cart
 
     else:
-        cookie_data = cookie_cart(request)
-        items = cookie_data['items']
-        cart = cookie_data['cart']
-        cartItems = cookie_data['cartItems']
+        cookie_cart = cookie_cart_instance(request)
+        items = cookie_cart['items']
+        cart_total = cookie_cart["cart_total"]
+        total_items_on_cart = cookie_cart["total_items_on_cart"]
 
-    return { "items": items, "cart": cart, "cartItems":cartItems }
+    cart = {
+        "items": items,
+        "cart_total": cart_total,
+        "total_items_on_cart": total_items_on_cart
+    }
 
-def guest_cart(request, data):
+    return cart
+
+
+def persist_guest_cart(request, data):
+    """
+    persist guest cart into the db
+    """
     email = data['customer_info']['email']
     firstname = data['customer_info']['first_name']
     lastname = data['customer_info']['last_name']
@@ -73,17 +93,17 @@ def guest_cart(request, data):
         first_name=firstname,
         last_name=lastname,
         is_guest=is_guest
-        )
-    
+    )
+
     customer = user.customer
 
-    cookie_data = cookie_cart(request)
+    cookie_data = cookie_cart_instance(request)
     items = cookie_data['items']
 
     cart = Cart.objects.create(
         customer=customer,
     )
-    
+
     for item in items:
         entry = Product_Entry.objects.get(sku=item['product_entry']['sku'])
 
