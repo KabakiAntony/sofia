@@ -13,7 +13,7 @@
                     <div>Quantity</div>
                     <div>Total</div>
                 </div>
-                {% for item in items %}
+                {% for item in cart.items %}
                 <div class="item">
                     <div><a href="{{ item.product_entry.product.get_absolute_url }}">
                         <div class="cart-item-image">
@@ -57,12 +57,12 @@
         </div>
         <div class="cart-summary">
             <h1>Cart summary</h1>
-            <p>You have <strong>{{ cart.get_cart_items }}</strong>
+            <p>You have <strong>{{ cart.total_items_on_cart }}</strong>
                 {% if cart.get_cart_items > 1 %}items{% else %} item {% endif %} in the cart</p>
-            <p>Subtotal = <strong>{{ cart.get_cart_total }}</strong></p>
+            <p>Subtotal = <strong>{{ cart.cart_total }}</strong></p>
             <div class="action-buttons">
                 <a href="{% url 'cart:checkout' %}" class="btn">
-                    Checkout Kes ({{ cart.get_cart_total }})
+                    Checkout Kes ({{ cart.cart_total }})
                 </a>
             </div>
         </div>
