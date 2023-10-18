@@ -15,7 +15,7 @@ from .utils import cart_data, guest_cart
 from .forms import CheckoutForm
 from customers.models import Address
 from products.models import Product_Entry
-from sofia.email_utils import _send_email
+# from email.utils.
 from sofia.kopokopoHandler import KopoKopoHandler
 
 
