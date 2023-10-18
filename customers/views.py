@@ -1,4 +1,5 @@
 import json
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -8,7 +9,6 @@ from django.template.loader import render_to_string
 
 from .models import Address, Region, Customer, Area, ShippingCosts
 from .forms import AddressForm
-from products.models import Product
 from cart.utils import cart_data
 
 
@@ -162,10 +162,3 @@ def get_shipping_cost(request):
             'components/total_n_shipping.html', context)}
 
     return JsonResponse(data)
-
-
-@login_required(login_url='/accounts/signin/')
-def get_orders(request):
-    # do an ajax request that will append all orders to this page
-    # I will work on this once I refactor the cart app
-    pass
