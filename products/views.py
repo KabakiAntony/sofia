@@ -6,13 +6,12 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 
 from .models import Product, Category, Product_Entry
-from cart.utils import cart_data
+from cart.utils import cart_instance
 
 
 def home(request):
     """ this will show products on the homepage """
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
     products = Product.objects.all().order_by("title")
     categories = Category.objects.all()
     paginator = Paginator(products, 24)
@@ -21,16 +20,14 @@ def home(request):
 
     context = {
         "categories": categories,
-        'cartItems': cartItems,
+        'cart': cart,
         "page_objects": page_objects
     }
     return render(request, "products/index.html", context)
 
 
 def product_details(request, slug):
-    data = cart_data(request)
-    cart = data['cart']
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
     product = Product.objects.get(slug=slug)
     similar_products = Product.objects.filter(
         category=product.category).exclude(slug__iexact=slug)[:6]
@@ -40,16 +37,14 @@ def product_details(request, slug):
         "product": product,
         "entries": entries,
         "similar_products": similar_products,
-        'cartItems': cartItems,
-        "cart": cart,
+        "cart": cart
     }
     return render(request, "products/product_detail.html", context)
 
 
 def search(request):
     """ show the results of a product that a user has searched for """
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
     q = request.GET.get('q') if request.GET.get('q') != None else ''
 
     product_entries = Product_Entry.objects.annotate(
@@ -63,7 +58,7 @@ def search(request):
 
     context = {
         "page_objects": page_objects,
-        'cartItems': cartItems,
+        'cart': cart,
     }
 
     return render(request, "products/search.html", context)
