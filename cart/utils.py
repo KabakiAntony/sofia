@@ -22,13 +22,13 @@ def cookie_cart_instance(request):
     cart_total = 0
     total_items_on_cart = 0
 
-    for i in cookie_cart_entry:
+    for sku in cookie_cart_entry:
         try:
-            entry = Product_Entry.objects.get(sku=i)
-            total = (entry.price * cookie_cart_entry[i]['quantity'])
+            entry = Product_Entry.objects.get(sku=sku)
+            total = (entry.price * cookie_cart_entry[sku]['quantity'])
 
             cart_total += total
-            total_items_on_cart += cookie_cart_entry[i]['quantity']
+            total_items_on_cart += cookie_cart_entry[sku]['quantity']
 
             item = {
                 'product_entry': {
@@ -39,7 +39,7 @@ def cookie_cart_instance(request):
                     'product': entry.product,
                     'image_set': entry.image_set.all(),
                 },
-                'quantity': cookie_cart_entry[i]['quantity'],
+                'quantity': cookie_cart_entry[sku]['quantity'],
                 'get_total': total,
             }
             items.append(item)
