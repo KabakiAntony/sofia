@@ -7,8 +7,8 @@ from django.utils.http import urlsafe_base64_decode
 from .forms import MyUserCreationForm, UserSetNewPasswordForm, UserForgotPasswordForm
 from .models import User
 from cart.utils import cart_data
-from sofia.email_utils import send_verification_email, send_password_reset_email
-from sofia.tokens import account_activation_token, password_reset_token
+from emails.tokens import account_activation_token, password_reset_token
+from emails.utils import send_password_reset_email, send_verification_email
 
 
 def signup_user(request):
@@ -22,15 +22,9 @@ def signup_user(request):
             user.is_active = False
             user.save()
 
-            email = form.cleaned_data.get('email')
+            send_verification_email(request, user)
 
-            try:
-                send_verification_email(request, user, email)
-
-                return render(request, 'accounts/check_email.html', {'cartItems': cartItems})
-
-            except Exception as e:
-                messages.add_message(request, messages.ERROR, str(e))
+            return render(request, 'accounts/check_email.html', {'cartItems': cartItems})
         else:
             for key in form.errors:
                 messages.add_message(
@@ -126,15 +120,11 @@ def send_reset_link(request):
                 user.reset_password = True
                 user.save()
 
-                try:
-                    send_password_reset_email(request, user, email)
-
-                except Exception as e:
-                    messages.add_message(request, messages.ERROR, str(e))
-
             message = "If this email is know to us, you will receive reset instructions shortly, meanwhile continue checking out our products"
             messages.add_message(request, messages.SUCCESS,
                                  f'{email} has been submitted successfully. {message}')
+
+            send_password_reset_email(request, user)
 
             return redirect('products:list')
 
