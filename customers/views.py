@@ -9,14 +9,13 @@ from django.template.loader import render_to_string
 
 from .models import Address, Region, Customer, Area, ShippingCosts
 from .forms import AddressForm
-from cart.utils import cart_data
+from cart.utils import cart_instance
 
 
 @login_required(login_url='/accounts/signin/')
 def user_profile(request):
     user = request.user
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
 
     try:
         address = Address.objects.get(customer=user.id)
@@ -24,7 +23,7 @@ def user_profile(request):
         context = {
             "customer": user.customer,
             "address": address,
-            "cartItems": cartItems,
+            "cart": cart,
         }
 
     except ObjectDoesNotExist:
@@ -32,7 +31,7 @@ def user_profile(request):
         context = {
             "customer": user.customer,
             "form": form,
-            "cartItems": cartItems,
+            "cart": cart,
         }
 
     return render(request, 'customers/profile.html', context)
@@ -40,8 +39,7 @@ def user_profile(request):
 
 @login_required(login_url='/accounts/signin/')
 def add_address(request):
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
 
     if request.method == "POST":
         user = request.user
@@ -79,7 +77,7 @@ def add_address(request):
 
             context = {
                 'form': form,
-                "cartItems": cartItems, }
+                "cart": cart, }
 
             return render(request, 'customers/profile.html', context)
 
@@ -114,8 +112,7 @@ def get_pickup_id(request):
 @login_required(login_url='/accounts/signin/')
 def update_address(request):
     user = request.user
-    data = cart_data(request)
-    cartItems = data['cartItems']
+    cart = cart_instance(request)
 
     try:
         address = Address.objects.get(customer=user.id)
@@ -133,7 +130,7 @@ def update_address(request):
 
         form = AddressForm(instance=address)
         context = {'form': form,
-                   "cartItems": cartItems, }
+                   "cart": cart, }
         return render(request, 'customers/update_address.html', context)
 
     except ObjectDoesNotExist:
@@ -141,18 +138,13 @@ def update_address(request):
 
 
 def get_shipping_cost(request):
-    data = cart_data(request)
-    cart = data['cart']
+    cart = cart_instance(request)
 
     if request.method == "POST":
         selected_area_id = json.load(request)['area_id']
         if selected_area_id:
             shipping_cost = ShippingCosts.objects.get(area=selected_area_id)
-            if request.user.is_authenticated:
-                shipping_n_cart_total = shipping_cost.cost + cart.get_cart_total
-            else:
-                shipping_n_cart_total = shipping_cost.cost + \
-                    cart['get_cart_total']
+            shipping_n_cart_total = shipping_cost.cost + cart['cart_total']
 
             context = {
                 "shipping_cost": shipping_cost.cost,

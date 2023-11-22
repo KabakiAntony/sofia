@@ -6,11 +6,11 @@
 
 {% block content %}
     <div class="container checkout-wrapper">
-        <div class="info-wrapper address">
-            <h3>Shipping information</h3>
+        <div class="shipping-info-wrapper shadow">
+            <h3 style="margin-bottom: 5px;">Shipping information</h3>
             <form id="shipping-info-form" method="POST" class="checkout-form">
                 {% csrf_token %}
-                <div class="address">
+                <div>
                     {% if not request.user.is_authenticated %}
                         <h3 class="small">All fields are required</h3>
                     {% else %}
@@ -21,29 +21,40 @@
                     <div class="personal-info">
                         {% if not request.user.is_authenticated %}
                         <div class="name">
+                            <div id="desktop-errors-name">
+                                <label id="desktop-firstname-error"></label>
+                                <label id="desktop-lastname-error"></label>
+                            </div>
                             <div class="name-labels mobile_hidden">
                                 {{ form.firstname.label_tag }}
                                 {{ form.lastname.label_tag }}
                             </div>
                             <div class="name-inputs">
+                                <label id="mobile-firstname-error"></label>
                                 {{ form.firstname.label_tag }}
                                 {{ form.firstname }}
+                                <label id="mobile-lastname-error"></label>
                                 {{ form.lastname.label_tag }}
                                 {{ form.lastname }}
                             </div>
                         </div>
                         <div class="email-phone">
+                            <div id="desktop-errors-email-phone">
+                                <label id="desktop-email-error"></label>
+                                <label id="desktop-phoneno-error"></label>
+                            </div>
                             <div class="email-labels mobile_hidden">
-                                {% comment %} <span id="email-or-phone-error"></span> {% endcomment %}
                                 {{ form.email.label_tag }}
                                 {{ form.mobile_no.label_tag }}
                             </div>
-                           <div class="email-mobile-inputs">
+                            <div class="email-mobile-inputs">
+                                <label id="mobile-email-error"></label>
                                 {{ form.email.label_tag }}
                                 {{ form.email }}
+                                <label id="mobile-phoneno-error"></label>
                                 {{ form.mobile_no.label_tag }}
                                 {{ form.mobile_no }}
-                            </div> 
+                            </div>
                         </div>
                         {% else %}
                         <div class="name">
@@ -53,34 +64,36 @@
                             </div>
                             <div class="name-inputs">
                                 <label>First name*</label>
-                                <input type="text" name="firstname" value="{{user.first_name|title}}" id="id_firstname" disabled required>
+                                <input type="text" name="firstname" value="{{user.first_name|title}}" id="id_firstname" disabled
+                                    required>
                                 <label>Last name*</label>
-                                <input type="text" name="lastname" value="{{user.last_name|title}}" id="id_lastname" disabled required>
+                                <input type="text" name="lastname" value="{{user.last_name|title}}" id="id_lastname" disabled
+                                    required>
                             </div>
                         </div>
                         <div class="email-phone">
                             <div class="email-labels mobile_hidden">
-                                <span id="email-or-phone-error"></span>
                                 <label>Email*</label>
                                 <label>Mobile no*</label>
                             </div>
-                           <div class="email-mobile-inputs">
-                             <span id="m-email-error"></span>
+                            <div class="email-mobile-inputs">
                                 <label>Email*</label>
-                                <input type="email" name="email" maxlength="255" id="id_email" value="{{ user.email }}"  disabled  required>
-                               <span id="m-mobile-error"></span>
-                               <label>Mobile no*</label>
-                                <input type="text" name="mobile_no"  id="id_mobile_no" value="{{user.customer.addresses.first.mobile_no}}" disabled required>
-                            </div> 
+                                <input type="email" name="email" maxlength="255" id="id_email" value="{{ user.email }}" disabled
+                                    required>
+                                <label>Mobile no*</label>
+                                <input type="text" name="mobile_no" id="id_mobile_no"
+                                    value="{{user.customer.addresses.first.mobile_no}}" disabled required>
+                            </div>
                         </div>
                         {% endif %}
                     </div>
                 </div>
                 <!-- shipping options -->
-                <div class="address">
+                <div>
                     <h3 class="small">Select Delivery or Pickup</h3>
                     <hr>
                     <div class="shipping-or-pickup">
+                        <label id="shipping-pickup-error"></label>
                         <label class="label-radio" for="shipping">
                             <input type="radio" name="shipping_or_pickup" id="shipping" value="shipping" required>Delivery
                         </label>
@@ -89,8 +102,9 @@
                         </label>
                     </div>
                 </div>
-                <div class="pickup-info address">
-                    <h3 class="small">Pickup is only available in Nairobi CBD at the following location</h3><hr>
+                <div class="pickup-info">
+                    <h3 class="small">Pickup is only available in Nairobi CBD at the following location</h3>
+                    <hr>
                     <ul>
                         <li>The Bazaar plaza, 7th floor</li>
                         <li>Crystal Suites</li>
@@ -98,19 +112,24 @@
                     </ul>
                 </div>
                 {%if request.user.is_authenticated %}
-                <div class="shipping-info address">
-                    <h3 class="small">Select Address</h3><hr>
+                <div class="shipping-info">
+                    <h3 class="small">Select Address</h3>
+                    <hr>
                     <div class="shipping-or-pickup">
+                        <label id="onfile-newaddress-error"></label>
                         <label class="label-radio" for="address_on_file">
-                            <input type="radio" name="delivery_method" id="address_on_file" value="address_on_file" required>Deliver to address on file
+                            <input type="radio" name="delivery_location" id="address_on_file" value="address_on_file" required>Deliver
+                            to address on file
                         </label>
                         <label class="label-radio" for="set_new_address">
-                            <input type="radio" name="delivery_method" id="set_new_address" value="set_new_address">Set new delivery address
+                            <input type="radio" name="delivery_location" id="set_new_address" value="set_new_address">Set new delivery
+                            address
                         </label>
                     </div>
                 </div>
-                <div class="address-on-file address">
-                    <h3 class="small">Address on file</h3><hr>
+                <div class="address-on-file">
+                    <h3 class="small">Address on file</h3>
+                    <hr>
                     {% with address=user.customer.addresses|get_default_address %}
                     <ul>
                         <li id="address_region">{{ address.region|title }}</li>
@@ -120,41 +139,47 @@
                     </ul>
                     {% endwith %}
                 </div>
-                <div class="set-new-address address">
-                    <h3 class="small">Set new delivery address</h3><hr>
+                <div class="set-new-address">
+                    <h3 class="small">Set new delivery address</h3>
+                    <hr>
+                    <label id="set_address_error"></label>
                     {% include 'components/new_address.html'%}
-                </div> 
+                </div>
                 {% else %}
-                    <div class="shipping-info address">
-                        <h3 class="small">Use the fields below to be descriptive as possible</h3>
-                        <hr>
-                        {% include 'components/new_address.html'%}
-                    </div>
+                <div class="shipping-info">
+                    <h3 class="small">Use the fields below to be descriptive as possible</h3>
+                    <hr>
+                    <label id="set_address_error"></label>
+                    {% include 'components/new_address.html'%}
+                </div>
                 {% endif %}
                 <div class="p-btn">
                     <button type="submit" class="btn-c continue" id="continue-btn">Continue</button>
                 </div>
             </form>
+            
         </div>
-        <div class="order-summary-wrapper address">
-            <h3>Cart summary - you have  ({{ cart.get_cart_items }})
-                item{{cart.get_cart_items|pluralize}} in the cart.
-            </h3><hr>
-            <div class="order-summary-holder">
-                {% for item in items %}
-                    <div class="item-holder">
-                        <div class="summary-name item">{{item.product_entry.title.capitalize}}</div>
-                        <div class="summary-image item"><img src="{{item.product_entry.image_set.all.first.thumb.url}}"></div>
-                        <div class="summary-quantity item">{{ item.quantity }}</div>
-                        <div class="summary-total item">{{ item.get_total }}</div>
-                    </div>
+        <div class="cart-summary-wrapper shadow">
+            <h3>Cart summary : You have ({{ cart.total_items_on_cart }})
+                item{{cart.total_items_on_cart|pluralize}} in the cart
+            </h3>
+            <hr>
+            <div class="cart-summary-holder">
+                {% for item in cart.items %}
+                <div class="item-holder">
+                    <div class="summary-name item">{{item.product_entry.title.capitalize}}</div>
+                    <div class="summary-image item"><img src="{{item.product_entry.image_set.all.first.thumb.url}}"></div>
+                    <div class="summary-quantity item">{{ item.quantity }}</div>
+                    <div class="summary-total item">{{ item.get_total }}</div>
+                </div>
                 {% endfor %}
                 <div class="sub_total_n_shipping">
-                    <p>Subtotal <strong class="strong">{{cart.get_cart_total}}</strong></p>
+                    <p>Subtotal <strong class="strong">{{cart.cart_total}}</strong></p>
                     <div class="shipping-option" id="shipping_option"></div>
                 </div>
                 <div class="payment-method-wrapper">
-                    <h3>Choose payment method</h3><hr>
+                    <h3>Choose payment method</h3>
+                    <hr>
                     <div class="payment-method">
                         <div class="mpesa_banner">
                             <p>Right now we are only offering mpesa but more options coming soon.</p>
@@ -167,7 +192,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
     <script src="{% static 'js/page/checkout.js' %}" type="module"></script>
     <script src="{% static 'js/page/profile.js' %}"></script>

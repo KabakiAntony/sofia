@@ -70,7 +70,7 @@
                     <li><a href="{% url 'signin' %}">Sign In</a></li>
                     <li><a href="{% url 'signup' %}">Sign Up</a></li>
                 {% endif %}
-                <li class="cart-icon"><a href="{% url 'cart:cart' %}" class="cart" data-item="{{cartItems}}">
+                <li class="cart-icon"><a href="{% url 'cart:cart' %}" class="cart" data-item="{{ cart.total_items_on_cart }}">
                     <svg class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="902.86px" height="902.86px"
                         viewBox="0 0 902.86 902.86">
                         <path d="M671.504,577.829l110.485-432.609H902.86v-68H729.174L703.128,179.2L0,178.697l74.753,399.129h596.751V577.829z
