@@ -58,7 +58,7 @@
         <div class="cart-summary">
             <h1>Cart summary</h1>
             <p>You have <strong>{{ cart.total_items_on_cart }}</strong>
-                {% if cart.get_cart_items > 1 %}items{% else %} item {% endif %} in the cart</p>
+                item{{ cart.total_items_on_cart|pluralize}} in the cart</p>
             <p>Subtotal = <strong>{{ cart.cart_total }}</strong></p>
             <div class="action-buttons">
                 <a href="{% url 'cart:checkout' %}" class="btn">
