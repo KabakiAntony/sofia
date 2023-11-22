@@ -7,13 +7,14 @@ class AccountsUserManager(BaseUserManager):
     This is a custom user model manager where email is the 
     unique identifier for authentication instead of a username
     """
+
     def create_user(self, email, password=None, **kwargs):
         """ create a user with the given email password and other info"""
         if not email:
             raise ValueError("A User must have an email address")
         email = self.normalize_email(email)
         user = self.model(
-            email = email,
+            email=email,
             **kwargs
         )
         user.set_password(password)
@@ -28,6 +29,8 @@ class AccountsUserManager(BaseUserManager):
         kwargs.setdefault('is_superuser', True)
         kwargs.setdefault('is_active', True)
 
+        if kwargs.get('is_active') is not True:
+            raise ValueError('Superuser must have is_active=True.')
         if kwargs.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if kwargs.get('is_superuser') is not True:
@@ -44,18 +47,9 @@ class User(AbstractUser):
     is_guest = models.BooleanField(default=False)
 
     objects = AccountsUserManager()
-    
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
-  
-
-
-
-
-
-
-
-
