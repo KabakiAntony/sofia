@@ -5,7 +5,7 @@ from products.models import Product_Entry
 
 class Cart(models.Model):
     customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+        Customer, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     complete = models.BooleanField(default=False)
@@ -27,9 +27,9 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     product_entry = models.ForeignKey(
-        Product_Entry, on_delete=models.SET_NULL, null=True)
+        Product_Entry, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
