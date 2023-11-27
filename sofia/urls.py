@@ -6,11 +6,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', sofia_admin_site.urls),
+    path('__debug__/', include("debug_toolbar.urls")),
     path('', include('accounts.urls')),
     path('', include('cart.urls')),
     path('', include('customers.urls')),
     path('', include('products.urls')),
     path('', include('orders.urls')),
+
 ]
 
 urlpatterns += staticfiles_urlpatterns()
