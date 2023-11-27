@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'cart.apps.CartConfig',
     'customers.apps.CustomersConfig',
     'orders.apps.OrdersConfig',
-    'emails.apps.EmailsConfig'
+    'emails.apps.EmailsConfig',
+    'debug_toolbar',
 ]
 
 
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'sofia.urls'
@@ -153,3 +155,8 @@ CSRF_TRUSTED_ORIGINS = ['https://sofia.co.ke/',]
 # celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+# debug toolbar settings
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
