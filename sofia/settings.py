@@ -148,3 +148,8 @@ DEFAULT_FROM_EMAIL = env('FROM_EMAIL', default='noreply@sofia.co.ke')
 
 # trusted origin
 CSRF_TRUSTED_ORIGINS = ['https://sofia.co.ke/',]
+
+
+# celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
